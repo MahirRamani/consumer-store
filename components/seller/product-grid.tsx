@@ -198,6 +198,7 @@ export default function ProductGrid({ onAddToCart, onRemoveFromCart, cartItems }
     </Card>
   )
 }
+
 // "use client"
 
 // import { useState } from "react"

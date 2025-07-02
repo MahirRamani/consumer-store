@@ -2,16 +2,17 @@ import { type NextRequest, NextResponse } from "next/server"
 import dbConnect from "@/lib/mongodb"
 import { Category } from "@/lib/models/category"
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await dbConnect()
 
-    const category = await Category.findById(params.id)
+    const { id } = await params
+    const category = await Category.findById(id)
     if (!category) {
       return NextResponse.json({ message: "Category not found" }, { status: 404 })
     }
 
-    await Category.findByIdAndDelete(params.id)
+    await Category.findByIdAndDelete(id)
 
     return NextResponse.json({ message: "Category deleted successfully" })
   } catch (error) {
@@ -20,12 +21,13 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
   }
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await dbConnect()
 
     const body = await request.json()
-    const category = await Category.findById(params.id)
+    const { id } = await params
+    const category = await Category.findById(id)
 
     if (!category) {
       return NextResponse.json({ message: "Category not found" }, { status: 404 })

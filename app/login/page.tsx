@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "sonner"
 import { useAuthStore } from "@/lib/store/auth-store"
-import { Store, UserCog, ScanBarcode, BarChart3 } from 'lucide-react'
+import { Store, UserCog, BarChart3 } from "lucide-react"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -18,7 +18,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false)
   const login = useAuthStore((state) => state.login)
 
-  const handleQuickLogin = async (role: "admin" | "seller" | "accountant") => {
+  const handleQuickLogin = async (role: "admin" | "accountant") => {
     setIsLoading(true)
     try {
       const response = await fetch("/api/auth/login", {
@@ -26,7 +26,7 @@ export default function LoginPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           username: role,
-          password: role === "admin" ? "admin123" : role === "seller" ? "seller123" : "accountant123",
+          password: role === "admin" ? "admin123" : "accountant123",
         }),
       })
 
@@ -96,15 +96,6 @@ export default function LoginPage() {
             </Button>
 
             <Button
-              onClick={() => handleQuickLogin("seller")}
-              disabled={isLoading}
-              className="w-full bg-green-500 hover:bg-green-600 text-white py-3 text-base font-medium"
-            >
-              <ScanBarcode className="w-5 h-5 mr-2" />
-              Login as Seller
-            </Button>
-
-            <Button
               onClick={() => handleQuickLogin("accountant")}
               disabled={isLoading}
               className="w-full bg-purple-500 hover:bg-purple-600 text-white py-3 text-base font-medium"
@@ -155,7 +146,7 @@ export default function LoginPage() {
 
           <div className="mt-6 pt-6 border-t border-gray-200">
             <p className="text-xs text-gray-500 text-center">
-              Demo credentials: admin/admin123, seller/seller123, accountant/accountant123
+              Demo credentials: admin/admin123, accountant/accountant123
             </p>
           </div>
         </CardContent>

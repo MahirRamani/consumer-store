@@ -135,9 +135,16 @@ export default function StudentManagement() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Standards</SelectItem>
+                  <SelectItem value="1st">1st Standard</SelectItem>
+                  <SelectItem value="2nd">2nd Standard</SelectItem>
+                  <SelectItem value="3rd">3rd Standard</SelectItem>
+                  <SelectItem value="4th">4th Standard</SelectItem>
+                  <SelectItem value="5th">5th Standard</SelectItem>
+                  <SelectItem value="6th">6th Standard</SelectItem>
+                  <SelectItem value="7th">7th Standard</SelectItem>
+                  <SelectItem value="8th">8th Standard</SelectItem>
+                  <SelectItem value="9th">9th Standard</SelectItem>
                   <SelectItem value="10th">10th Standard</SelectItem>
-                  <SelectItem value="11th">11th Standard</SelectItem>
-                  <SelectItem value="12th">12th Standard</SelectItem>
                 </SelectContent>
               </Select>
             </div>

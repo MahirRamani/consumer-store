@@ -2,11 +2,12 @@ import { type NextRequest, NextResponse } from "next/server"
 import dbConnect from "@/lib/mongodb"
 import { Product } from "@/lib/models/product"
 
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await dbConnect()
 
-    const product = await Product.findById(params.id)
+    const { id } = await params
+    const product = await Product.findById(id)
 
     if (!product) {
       return NextResponse.json({ message: "Product not found" }, { status: 404 })
@@ -30,12 +31,13 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await dbConnect()
 
     const body = await request.json()
-    const product = await Product.findById(params.id)
+    const { id } = await params
+    const product = await Product.findById(id)
 
     if (!product) {
       return NextResponse.json({ message: "Product not found" }, { status: 404 })
@@ -68,16 +70,17 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await dbConnect()
 
-    const product = await Product.findById(params.id)
+    const { id } = await params
+    const product = await Product.findById(id)
     if (!product) {
       return NextResponse.json({ message: "Product not found" }, { status: 404 })
     }
 
-    await Product.findByIdAndDelete(params.id)
+    await Product.findByIdAndDelete(id)
 
     return NextResponse.json({ message: "Product deleted successfully" })
   } catch (error) {

@@ -2,11 +2,12 @@ import { type NextRequest, NextResponse } from "next/server"
 import dbConnect from "@/lib/mongodb"
 import { Student } from "@/lib/models/student"
 
-export async function GET(request: NextRequest, { params }: { params: { rollNumber: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ rollNumber: string }> }) {
   try {
     await dbConnect()
 
-    const student = await Student.findOne({ rollNumber: params.rollNumber })
+    const { rollNumber } = await params
+    const student = await Student.findOne({ rollNumber })
 
     if (!student) {
       return NextResponse.json({ message: "Student not found" }, { status: 404 })
@@ -16,9 +17,8 @@ export async function GET(request: NextRequest, { params }: { params: { rollNumb
       id: student._id.toString(),
       name: student.name,
       rollNumber: student.rollNumber,
-      // email: student.email,
       standard: student.standard,
-      // year: student.year,
+      year: student.year,
       balance: student.balance,
       status: student.status,
       createdAt: student.createdAt,

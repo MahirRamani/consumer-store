@@ -287,10 +287,10 @@ export default function AccountantDashboard() {
                   </Select>
                 </div>
                 <div className="flex items-end">
-                  <Button className="w-full">
+                  {/* <Button className="w-full">
                     <Filter className="w-4 h-4 mr-2" />
                     Apply Filters
-                  </Button>
+                  </Button> */}
                 </div>
               </div>
             </CardContent>

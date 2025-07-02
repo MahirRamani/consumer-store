@@ -4,14 +4,15 @@ import { Product } from "@/lib/models/product"
 import { InventoryLog } from "@/lib/models/inventory-log"
 import { updateStockSchema } from "@/lib/validations/product"
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await dbConnect()
 
     const body = await request.json()
     const { quantity, reason } = updateStockSchema.parse(body)
+    const { id } = await params
 
-    const product = await Product.findById(params.id)
+    const product = await Product.findById(id)
     if (!product) {
       return NextResponse.json({ message: "Product not found" }, { status: 404 })
     }

@@ -3,16 +3,16 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { Store, Bell, LogOut, BarChart3, Users, Package, Warehouse, Receipt, Tag } from "lucide-react"
+import { Store, Bell, LogOut, BarChart3, Package, Warehouse, Receipt, Tag, ShoppingCart } from "lucide-react"
 import { useAuthStore } from "@/lib/store/auth-store"
 import OverviewTab from "@/components/admin/overview-tab"
-import StudentsTab from "@/components/admin/students-tab"
 import ProductsTab from "@/components/admin/products-tab"
 import InventoryTab from "@/components/admin/inventory-tab"
 import TransactionsTab from "@/components/admin/transactions-tab"
 import CategoriesTab from "@/components/admin/categories-tab"
+import SellingTab from "@/components/admin/selling-tab"
 
-type AdminTab = "overview" | "students" | "products" | "categories" | "inventory" | "transactions"
+type AdminTab = "overview" | "products" | "categories" | "inventory" | "transactions" | "selling"
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<AdminTab>("overview")
@@ -26,7 +26,7 @@ export default function AdminDashboard() {
 
   const tabs = [
     { id: "overview" as AdminTab, label: "Overview", icon: BarChart3 },
-    { id: "students" as AdminTab, label: "Students", icon: Users },
+    { id: "selling" as AdminTab, label: "Selling", icon: ShoppingCart },
     { id: "products" as AdminTab, label: "Products", icon: Package },
     { id: "categories" as AdminTab, label: "Categories", icon: Tag },
     { id: "inventory" as AdminTab, label: "Inventory", icon: Warehouse },
@@ -37,8 +37,8 @@ export default function AdminDashboard() {
     switch (activeTab) {
       case "overview":
         return <OverviewTab />
-      case "students":
-        return <StudentsTab />
+      case "selling":
+        return <SellingTab />
       case "products":
         return <ProductsTab />
       case "categories":

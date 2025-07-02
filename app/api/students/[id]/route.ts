@@ -2,16 +2,17 @@ import { type NextRequest, NextResponse } from "next/server"
 import dbConnect from "@/lib/mongodb"
 import { Student } from "@/lib/models/student"
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await dbConnect()
 
-    const student = await Student.findById(params.id)
+    const { id } = await params
+    const student = await Student.findById(id)
     if (!student) {
       return NextResponse.json({ message: "Student not found" }, { status: 404 })
     }
 
-    await Student.findByIdAndDelete(params.id)
+    await Student.findByIdAndDelete(id)
 
     return NextResponse.json({ message: "Student deleted successfully" })
   } catch (error) {

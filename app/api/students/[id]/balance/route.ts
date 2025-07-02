@@ -3,14 +3,15 @@ import dbConnect from "@/lib/mongodb"
 import { Student } from "@/lib/models/student"
 import { updateBalanceSchema } from "@/lib/validations/student"
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     await dbConnect()
 
     const body = await request.json()
     const { amount } = updateBalanceSchema.parse(body)
+    const { id } = await params
 
-    const student = await Student.findById(params.id)
+    const student = await Student.findById(id)
     if (!student) {
       return NextResponse.json({ message: "Student not found" }, { status: 404 })
     }
@@ -22,9 +23,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       id: student._id.toString(),
       name: student.name,
       rollNumber: student.rollNumber,
-      // email: student.email,
       standard: student.standard,
-      // year: student.year,
+      year: student.year,
       balance: student.balance,
       status: student.status,
       createdAt: student.createdAt,

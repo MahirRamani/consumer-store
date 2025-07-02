@@ -9,7 +9,7 @@ export async function GET() {
     const transactions = await Transaction.find()
       .populate("studentId", "name rollNumber")
       .sort({ createdAt: -1 })
-      .limit(5)
+      .limit(10)
 
     return NextResponse.json(
       transactions.map((transaction) => ({
