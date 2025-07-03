@@ -106,10 +106,10 @@ export default function OverviewTab() {
                 <IndianRupee className="text-green-600 w-6 h-6" />
               </div>
             </div>
-            <p className="text-xs text-green-600 mt-2 flex items-center">
+            {/* <p className="text-xs text-green-600 mt-2 flex items-center">
               <TrendingUp className="w-3 h-3 mr-1" />
               18% from yesterday
-            </p>
+            </p> */}
           </CardContent>
         </Card>
 

@@ -2,7 +2,7 @@ import mongoose, { Schema, type Document } from "mongoose"
 
 export interface IProduct extends Document {
   name: string
-  category: "food" | "stationery" | "daily-use" | "pooja"
+  category: string
   price: number
   stock: number
   lowStockThreshold: number
@@ -21,7 +21,7 @@ const ProductSchema = new Schema<IProduct>({
   category: {
     type: String,
     required: true,
-    enum: ["food", "stationery", "daily-use", "pooja"],
+    // enum: ["food", "stationery", "daily-use", "pooja"],
   },
   price: {
     type: Number,
