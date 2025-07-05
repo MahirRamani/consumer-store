@@ -22,7 +22,7 @@ export default function AddStudentModal({ open, onOpenChange }: AddStudentModalP
     rollNumber: "",
     standard: "",
     year: "",
-    balance: "0",
+    balance: 0,
   })
   const queryClient = useQueryClient()
 
@@ -34,7 +34,7 @@ export default function AddStudentModal({ open, onOpenChange }: AddStudentModalP
         body: JSON.stringify({
           ...studentData,
           year: Number.parseInt(studentData.year),
-          balance: Number.parseFloat(studentData.balance),
+          balance: studentData.balance,
           status: "active",
         }),
       })
@@ -59,7 +59,7 @@ export default function AddStudentModal({ open, onOpenChange }: AddStudentModalP
       rollNumber: "",
       standard: "",
       year: "",
-      balance: "0",
+      balance: 0,
     })
   }
 
@@ -157,11 +157,11 @@ export default function AddStudentModal({ open, onOpenChange }: AddStudentModalP
             <Input
               id="balance"
               type="number"
-              step="0.01"
-              min="0"
+              step={1}
+              // min={0}
               value={formData.balance}
-              onChange={(e) => setFormData((prev) => ({ ...prev, balance: e.target.value }))}
-              placeholder="0.00"
+              onChange={(e) => setFormData((prev) => ({ ...prev, balance: Number.parseInt(e.target.value)}))}
+              placeholder="0"
             />
           </div>
 

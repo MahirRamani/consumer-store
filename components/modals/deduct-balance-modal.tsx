@@ -1,37 +1,36 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
-import { IndianRupee } from 'lucide-react'
+import { Minus } from "lucide-react"
 
-interface DeductMoneyModalProps {
+interface DeductBalanceModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onConfirm: (amount: number) => void
+  onConfirm: (amount: number, reason: string) => void
   isLoading: boolean
 }
 
-export default function DeductMoneyModal({ open, onOpenChange, onConfirm, isLoading }: DeductMoneyModalProps) {
+export default function DeductBalanceModal({ open, onOpenChange, onConfirm, isLoading }: DeductBalanceModalProps) {
   const [amount, setAmount] = useState("")
-  const [quickAmount, setQuickAmount] = useState("")
+  const [reason, setReason] = useState("")
 
   const quickAmounts = [
+    { value: "10", label: "₹10" },
+    { value: "25", label: "₹25" },
     { value: "50", label: "₹50" },
     { value: "100", label: "₹100" },
-    { value: "250", label: "₹250" },
+    { value: "200", label: "₹200" },
     { value: "500", label: "₹500" },
-    { value: "1000", label: "₹1000" },
-    { value: "2000", label: "₹2000" },
   ]
 
   const handleQuickAmount = (value: string) => {
-    setQuickAmount(value)
     setAmount(value)
   }
 
@@ -45,18 +44,23 @@ export default function DeductMoneyModal({ open, onOpenChange, onConfirm, isLoad
       return
     }
 
-    if (deductAmount > 10000) {
-      toast.error("Maximum top-up amount is ₹10,000.")
+    if (deductAmount > 5000) {
+      toast.error("Maximum deduction amount is ₹5,000.")
       return
     }
 
-    onConfirm(deductAmount)
+    if (!reason.trim()) {
+      toast.error("Please provide a reason for the deduction.")
+      return
+    }
+
+    onConfirm(deductAmount, reason.trim())
   }
 
   const handleClose = () => {
     if (!isLoading) {
       setAmount("")
-      setQuickAmount("")
+      setReason("")
       onOpenChange(false)
     }
   }
@@ -66,8 +70,8 @@ export default function DeductMoneyModal({ open, onOpenChange, onConfirm, isLoad
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center">
-            <IndianRupee className="w-5 h-5 mr-2 text-green-500" />
-            Deduct Money
+            <Minus className="w-5 h-5 mr-2 text-red-500" />
+            Deduct Balance
           </DialogTitle>
         </DialogHeader>
 
@@ -80,9 +84,9 @@ export default function DeductMoneyModal({ open, onOpenChange, onConfirm, isLoad
                 <Button
                   key={qa.value}
                   type="button"
-                  variant={quickAmount === qa.value ? "default" : "outline"}
+                  variant={amount === qa.value ? "default" : "outline"}
                   onClick={() => handleQuickAmount(qa.value)}
-                  className={`text-sm ${quickAmount === qa.value ? "bg-green-500 hover:bg-green-600 text-white" : ""}`}
+                  className={`text-sm ${amount === qa.value ? "bg-red-500 hover:bg-red-600 text-white" : ""}`}
                 >
                   {qa.label}
                 </Button>
@@ -92,30 +96,41 @@ export default function DeductMoneyModal({ open, onOpenChange, onConfirm, isLoad
 
           {/* Custom Amount Input */}
           <div>
-            <Label htmlFor="customAmount">Custom Amount (₹)</Label>
+            <Label htmlFor="customAmount">Deduction Amount (₹)</Label>
             <Input
               id="customAmount"
               type="number"
-              // step=""
+              step="0.01"
               min="1"
-              max="10000"
+              max="5000"
               value={amount}
-              onChange={(e) => {
-                setAmount(e.target.value)
-                setQuickAmount("")
-              }}
+              onChange={(e) => setAmount(e.target.value)}
               placeholder="Enter amount"
               className="text-lg"
             />
-            <p className="text-xs text-gray-500 mt-1">Minimum: ₹1, Maximum: ₹10,000</p>
+            <p className="text-xs text-gray-500 mt-1">Minimum: ₹1, Maximum: ₹5,000</p>
+          </div>
+
+          {/* Reason Input */}
+          <div>
+            <Label htmlFor="reason">Reason for Deduction *</Label>
+            <Textarea
+              id="reason"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Please provide a reason for this deduction..."
+              className="min-h-[80px]"
+              maxLength={200}
+            />
+            <p className="text-xs text-gray-500 mt-1">{reason.length}/200 characters</p>
           </div>
 
           {/* Amount Preview */}
           {amount && !isNaN(Number.parseFloat(amount)) && Number.parseFloat(amount) > 0 && (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-gray-600">Amount to deduct:</span>
-                <span className="text-lg font-bold text-green-600">₹{Number.parseFloat(amount).toFixed(2)}</span>
+                <span className="text-lg font-bold text-red-600">-₹{Number.parseFloat(amount).toFixed(2)}</span>
               </div>
             </div>
           )}
@@ -123,11 +138,11 @@ export default function DeductMoneyModal({ open, onOpenChange, onConfirm, isLoad
           <div className="flex space-x-2 pt-4">
             <Button
               type="submit"
-              disabled={isLoading || !amount || Number.parseFloat(amount) <= 0}
-              className="flex-1 bg-green-500 hover:bg-green-600 text-white"
+              disabled={isLoading || !amount || Number.parseFloat(amount) <= 0 || !reason.trim()}
+              className="flex-1 bg-red-500 hover:bg-red-600 text-white"
             >
-              <IndianRupee className="w-4 h-4 mr-2" />
-              {isLoading ? "Processing..." : "Top Up Balance"}
+              <Minus className="w-4 h-4 mr-2" />
+              {isLoading ? "Processing..." : "Deduct Balance"}
             </Button>
             <Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>
               Cancel
