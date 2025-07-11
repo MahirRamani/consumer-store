@@ -21,13 +21,21 @@ export async function GET(request: NextRequest) {
       query.category = category
     }
 
-    const products = await Product.find(query).sort({ createdAt: -1 })
+    // const products = await Product.find(query).sort({ createdAt: -1 })
+
+    const products = await Product.find(query)
+      .populate('categoryId', 'name') // Populate categoryId with category name
+      .sort({ createdAt: -1 })
+
+    console.log("Products:", products);
+    
 
     return NextResponse.json(
       products.map((product) => ({
         id: product._id.toString(),
         name: product.name,
-        category: product.category,
+        category: product.categoryId?.name, // Get category name from populated data
+        categoryId: product.categoryId?._id?.toString(),
         price: product.price,
         stock: product.stock,
         lowStockThreshold: product.lowStockThreshold,
@@ -48,6 +56,7 @@ export async function POST(request: NextRequest) {
     await dbConnect()
 
     const body = await request.json()
+    
     const validatedData = createProductSchema.parse(body)
 
     const product = new Product(validatedData)
@@ -57,7 +66,6 @@ export async function POST(request: NextRequest) {
       {
         id: product._id.toString(),
         name: product.name,
-        category: product.category,
         price: product.price,
         stock: product.stock,
         lowStockThreshold: product.lowStockThreshold,

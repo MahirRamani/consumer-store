@@ -13,6 +13,7 @@ import { toast } from "sonner"
 import AddStudentModal from "@/components/modals/add-student-modal"
 import TopUpModal from "@/components/modals/top-up-modal"
 import DeductBalanceModal from "@/components/modals/deduct-balance-modal"
+import EditStudentModal from "@/components/modals/edit-student-modal"
 import type { Student } from "@/lib/types"
 
 export default function StudentManagement() {
@@ -22,6 +23,7 @@ export default function StudentManagement() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [showTopUpModal, setShowTopUpModal] = useState(false)
   const [showDeductModal, setShowDeductModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
   const [selectedStudentId, setSelectedStudentId] = useState<string | null>(null)
   const queryClient = useQueryClient()
 
@@ -76,6 +78,27 @@ export default function StudentManagement() {
     },
   })
 
+  const editStudentMutation = useMutation({
+    mutationFn: async (data: { name: string; rollNumber: string; standard: string; year: number }) => {
+      const response = await fetch(`/api/students/${selectedStudent?.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      })
+      if (!response.ok) throw new Error("Failed to update student")
+      return response.json()
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["students"] })
+      toast.success("Student updated successfully.")
+      setShowEditModal(false)
+      setSelectedStudent(null)
+    },
+    onError: () => {
+      toast.error("Failed to update student.")
+    },
+  })
+
   const deleteStudentMutation = useMutation({
     mutationFn: async (studentId: string) => {
       const response = await fetch(`/api/students/${studentId}`, {
@@ -92,27 +115,36 @@ export default function StudentManagement() {
       toast.error("Failed to delete student account.")
     },
   })
-
+  
   const handleTopUp = (studentId: string) => {
     setSelectedStudentId(studentId)
     setShowTopUpModal(true)
   }
-
+  
   const handleDeduct = (studentId: string) => {
     setSelectedStudentId(studentId)
     setShowDeductModal(true)
   }
-
+  
   const handleTopUpConfirm = (amount: number) => {
     if (selectedStudentId) {
       topUpMutation.mutate({ studentId: selectedStudentId, amount })
     }
   }
-
+  
   const handleDeductConfirm = (amount: number, reason: string) => {
     if (selectedStudentId) {
       deductMutation.mutate({ studentId: selectedStudentId, amount, reason })
     }
+  }
+  
+  const handleEditStudent = (student: Student) => {
+    setSelectedStudent(student)
+    setShowEditModal(true)
+  }
+  
+  function handleConfirmEdit(data: any): void {
+    throw new Error("Function not implemented.")
   }
 
   const handleDeleteStudent = (studentId: string, studentName: string) => {
@@ -134,6 +166,7 @@ export default function StudentManagement() {
   if (isLoading) {
     return <div className="text-center py-8">Loading students...</div>
   }
+
 
   return (
     <div className="space-y-6">
@@ -287,9 +320,15 @@ export default function StudentManagement() {
                           >
                             <Minus className="w-4 h-4" />
                           </Button>
-                          <Button variant="ghost" size="sm" className="text-purple-500 hover:text-purple-600">
-                            <Edit className="w-4 h-4" />
-                          </Button>
+                          <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEditStudent(student)}
+                          className="text-purple-500 hover:text-purple-600"
+                          title="Edit Student"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
                           <Button variant="ghost" size="sm" className="text-gray-400 hover:text-gray-600">
                             <History className="w-4 h-4" />
                           </Button>
@@ -326,6 +365,14 @@ export default function StudentManagement() {
         onOpenChange={setShowDeductModal}
         onConfirm={handleDeductConfirm}
         isLoading={deductMutation.isPending}
+      />
+      
+      <EditStudentModal
+        open={showEditModal}
+        onOpenChange={setShowEditModal}
+        onConfirm={handleConfirmEdit}
+        isLoading={editStudentMutation.isPending}
+        student={selectedStudent}
       />
     </div>
   )

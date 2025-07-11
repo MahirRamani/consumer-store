@@ -128,7 +128,7 @@ export default function UpdateStockModal({ open, onOpenChange, productId }: Upda
           {/* Product Info */}
           <div className="p-4 bg-gray-50 rounded-lg">
             <h4 className="font-semibold text-gray-900">{product.name}</h4>
-            <p className="text-sm text-gray-600 capitalize">{product.category.replace("-", " ")}</p>
+            <p className="text-sm text-gray-600 capitalize">{product.category?.name}</p>
             <div className="flex justify-between items-center mt-2">
               <span className="text-sm text-gray-600">Current Stock:</span>
               <Badge variant="outline" className="font-medium">

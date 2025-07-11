@@ -12,8 +12,10 @@ import { Switch } from "@/components/ui/switch"
 import { Plus, Edit, Package, Search, AlertTriangle, Trash2, Eye, EyeOff } from "lucide-react"
 import { toast } from "sonner"
 import AddProductModal from "@/components/modals/add-product-modal"
+import EditProductModal from "@/components/modals/edit-product-modal"
 import UpdateStockModal from "@/components/modals/update-stock-modal"
-import type { Product } from "@/lib/types"
+
+import type { Product, EditProduct } from "@/lib/types"
 
 export default function ProductsTab() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -22,6 +24,8 @@ export default function ProductsTab() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [showStockModal, setShowStockModal] = useState(false)
   const [selectedProductId, setSelectedProductId] = useState<string | null>(null)
+  const [showEditModal, setShowEditModal] = useState(false)
+const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
   const queryClient = useQueryClient()
 
   const { data: products, isLoading } = useQuery({
@@ -45,6 +49,52 @@ export default function ProductsTab() {
       return response.json()
     },
   })
+
+  const editProductMutation = useMutation({
+  mutationFn: async (data: {
+    name: string
+    categoryId: string
+    price: number
+    stock: number
+    lowStockThreshold: number
+    barcode?: string
+    description?: string
+  }) => {
+    const response = await fetch(`/api/products/${selectedProduct?.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+    if (!response.ok) throw new Error("Failed to update product")
+    return response.json()
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["products"] })
+    toast.success("Product updated successfully.")
+    setShowEditModal(false)
+    setSelectedProduct(null)
+  },
+  onError: () => {
+    toast.error("Failed to update product.")
+  },
+  })
+  
+  const handleEditProduct = (product: Product) => {
+  setSelectedProduct(product)
+  setShowEditModal(true)
+}
+
+const handleConfirmEdit = (data: {
+  name: string
+  categoryId: string
+  price: number
+  stock: number
+  lowStockThreshold: number
+  barcode?: string
+  description?: string
+}) => {
+  editProductMutation.mutate(data)
+}
 
   const deleteProductMutation = useMutation({
     mutationFn: async (productId: string) => {
@@ -226,7 +276,7 @@ export default function ProductsTab() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 capitalize">
-                      {product.category.replace("-", " ")}
+                      {product.category?.replace("-", " ")}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
                       ₹{product.price.toFixed(2)}
@@ -279,13 +329,14 @@ export default function ProductsTab() {
                           {product.isActive ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                         </Button>
                         <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-purple-500 hover:text-purple-600"
-                          title="Edit Product"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
+  variant="ghost"
+  size="sm"
+  onClick={() => handleEditProduct(product)}
+  className="text-purple-500 hover:text-purple-600"
+  title="Edit Product"
+>
+  <Edit className="w-4 h-4" />
+</Button>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -306,6 +357,14 @@ export default function ProductsTab() {
       </Card>
 
       <AddProductModal open={showAddModal} onOpenChange={setShowAddModal} />
+
+      <EditProductModal
+  open={showEditModal}
+  onOpenChange={setShowEditModal}
+  onConfirm={handleConfirmEdit}
+  isLoading={editProductMutation.isPending}
+  product={selectedProduct}
+/>
 
       <UpdateStockModal open={showStockModal} onOpenChange={setShowStockModal} productId={selectedProductId} />
     </div>

@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Search, Scan, Plus, Minus } from "lucide-react"
+import { Search, Plus, Minus } from "lucide-react"
 import type { Product, CartItem } from "@/lib/types"
 
 interface ProductGridProps {
@@ -92,20 +92,13 @@ export default function ProductGrid({ onAddToCart, onRemoveFromCart, cartItems }
                 className="pl-10 w-64"
               />
             </div>
-            <Button
-              variant="outline"
-              className="text-purple-500 border-purple-500 hover:bg-purple-500 hover:text-white bg-transparent"
-            >
-              <Scan className="w-4 h-4 mr-2" />
-              Scan
-            </Button>
           </div>
         </div>
       </CardHeader>
 
       <CardContent className="space-y-4">
         {/* Debug Panel */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-xs">
+        {/* <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 text-xs">
           <p>
             <strong>Debug Info:</strong>
           </p>
@@ -113,7 +106,7 @@ export default function ProductGrid({ onAddToCart, onRemoveFromCart, cartItems }
           <p>Total Products: {products?.length || 0}</p>
           <p>Filtered Products: {filteredProducts?.length || 0}</p>
           <p>Categories: {categories?.length || 0}</p>
-        </div>
+        </div> */}
 
         {/* Category Filters */}
         <div className="flex flex-wrap gap-2">
@@ -166,8 +159,9 @@ export default function ProductGrid({ onAddToCart, onRemoveFromCart, cartItems }
                 }`}
               >
                 <div className="text-center">
-                  <div className="bg-gray-100 rounded-lg p-2 mb-2">
-                    <span className="text-2xl">{getCategoryIcon(product.category)}</span>
+                  <div className="bg-gray-100 rounded-lg p-2 mb-2 items-center flex justify-center">
+                    {/* <span className="text-2xl">{getCategoryIcon(product.category)}</span> */}
+                    <img src="https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcSP-aQhW2wzv_K4gx6XvaxXq_eyWnXvxJlDacCTtecfV0X2tCe_-DYVo62PX4j5V205Uk6Pu-Kqo93HbxjOiY9iDNDWT2h4-sGIuAmkNWetJoyWSSJbtmbkJg" alt="" height={"80px"} width={"80px"}/>
                   </div>
                   <h4 className="font-medium text-sm text-gray-900 mb-1">{product.name}</h4>
                   <p className="text-xs text-gray-400 mb-1">Category: {product.category}</p>

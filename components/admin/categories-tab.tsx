@@ -10,11 +10,15 @@ import { Badge } from "@/components/ui/badge"
 import { Plus, Edit, Trash2, Search } from "lucide-react"
 import { toast } from "sonner"
 import AddCategoryModal from "@/components/modals/add-category-modal"
+import EditCategoryModal from "@/components/modals/edit-category-modal"
+
 import type { Category } from "@/lib/types"
 
 export default function CategoriesTab() {
   const [searchTerm, setSearchTerm] = useState("")
   const [showAddModal, setShowAddModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
   const queryClient = useQueryClient()
 
   const { data: categories, isLoading } = useQuery({
@@ -25,6 +29,27 @@ export default function CategoriesTab() {
       return response.json()
     },
   })
+
+  const editCategoryMutation = useMutation({
+  mutationFn: async (data: { name: string; description: string }) => {
+    const response = await fetch(`/api/categories/${selectedCategory?.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+    if (!response.ok) throw new Error("Failed to update category")
+    return response.json()
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ["categories"] })
+    toast.success("Category updated successfully.")
+    setShowEditModal(false)
+    setSelectedCategory(null)
+  },
+  onError: () => {
+    toast.error("Failed to update category.")
+  },
+})
 
   const deleteCategoryMutation = useMutation({
     mutationFn: async (categoryId: string) => {
@@ -62,6 +87,15 @@ export default function CategoriesTab() {
     },
   })
 
+  const handleEditCategory = (category: Category) => {
+  setSelectedCategory(category)
+  setShowEditModal(true)
+}
+
+const handleConfirmEdit = (data: { name: string; description: string }) => {
+  editCategoryMutation.mutate(data)
+  }
+  
   const handleDeleteCategory = (categoryId: string, categoryName: string) => {
     if (window.confirm(`Are you sure you want to delete "${categoryName}" category? This action cannot be undone.`)) {
       deleteCategoryMutation.mutate(categoryId)
@@ -163,6 +197,36 @@ export default function CategoriesTab() {
                       {new Date(category.createdAt).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+  <div className="flex space-x-2">
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={() => handleEditCategory(category)}
+      className="text-purple-500 hover:text-purple-600"
+      title="Edit Category"
+    >
+      <Edit className="w-4 h-4" />
+    </Button>
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={() => handleToggleActive(category.id, category.isActive)}
+      className="text-blue-500 hover:text-blue-600"
+      title="Toggle Active Status"
+    >
+      {category.isActive ? "Deactivate" : "Activate"}
+    </Button>
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={() => handleDeleteCategory(category.id, category.name)}
+      className="text-red-500 hover:text-red-600"
+    >
+      <Trash2 className="w-4 h-4" />
+    </Button>
+  </div>
+</td>
+                    {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <div className="flex space-x-2">
                         <Button
                           variant="ghost"
@@ -181,7 +245,7 @@ export default function CategoriesTab() {
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
-                    </td>
+                    </td> */}
                   </tr>
                 ))}
               </tbody>
@@ -191,6 +255,13 @@ export default function CategoriesTab() {
       </Card>
 
       <AddCategoryModal open={showAddModal} onOpenChange={setShowAddModal} />
+      <EditCategoryModal
+  open={showEditModal}
+  onOpenChange={setShowEditModal}
+  onConfirm={handleConfirmEdit}
+  isLoading={editCategoryMutation.isPending}
+  category={selectedCategory}
+/>
     </div>
   )
 }

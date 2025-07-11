@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { AddProduct, Product } from "@/lib/types";
 
 interface AddProductModalProps {
   open: boolean;
@@ -35,24 +36,27 @@ export default function AddProductModal({
   const [formData, setFormData] = useState({
     name: "",
     category: "",
-    price: "",
-    stock: "",
-    lowStockThreshold: "10",
+    categoryId: "",
+    price: 0,
+    stock: 0,
+    lowStockThreshold: 10,
     barcode: "",
     description: "",
   });
   const queryClient = useQueryClient();
 
   const addProductMutation = useMutation({
-    mutationFn: async (productData: any) => {
+    mutationFn: async (productData: AddProduct) => {
+      console.log("Form data 1:", productData);
+
       const response = await fetch("/api/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...productData,
-          price: Number.parseFloat(productData.price),
-          stock: Number.parseInt(productData.stock),
-          lowStockThreshold: Number.parseInt(productData.lowStockThreshold),
+          price: productData.price,
+          stock:productData.stock,
+          lowStockThreshold: productData.lowStockThreshold,
           isActive: true,
         }),
       });
@@ -77,9 +81,10 @@ export default function AddProductModal({
     setFormData({
       name: "",
       category: "",
-      price: "",
-      stock: "",
-      lowStockThreshold: "10",
+      categoryId: "",
+      price: 0,
+      stock: 0,
+      lowStockThreshold: 10,
       barcode: "",
       description: "",
     });
@@ -89,6 +94,8 @@ export default function AddProductModal({
     queryKey: ["categories"],
     queryFn: async () => {
       const response = await fetch("/api/categories");
+      console.log("response", response);
+
       if (!response.ok) throw new Error("Failed to fetch categories");
       return response.json();
     },
@@ -96,6 +103,8 @@ export default function AddProductModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    console.log("Form data 0:", formData);
 
     if (
       !formData.name ||
@@ -107,15 +116,17 @@ export default function AddProductModal({
       return;
     }
 
-    if (Number.parseFloat(formData.price) <= 0) {
+    if (formData.price <= 0) {
       toast.error("Price must be greater than 0.");
       return;
     }
 
-    if (Number.parseInt(formData.stock) < 0) {
+    if (formData.stock < 0) {
       toast.error("Stock cannot be negative.");
       return;
     }
+
+    console.log("Form data:", formData);
 
     addProductMutation.mutate(formData);
   };
@@ -151,22 +162,25 @@ export default function AddProductModal({
           <div>
             <Label htmlFor="category">Category *</Label>
             <Select
-              value={formData.category}
-              onValueChange={(value) =>
-                setFormData((prev) => ({ ...prev, category: value }))
-              }
+              onValueChange={(id: string) => {
+                console.log("Selected Category ID:", id);
+                const selectedCategory = categories?.find(
+                  (c: { id: string }) => c.id === id
+                );
+                setFormData((prev) => ({
+                  ...prev,
+                  categoryId: id,
+                  category: selectedCategory?.name,
+                }));
+              }}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
-                {/* <SelectItem value="food">Food</SelectItem>
-                <SelectItem value="stationery">Stationery</SelectItem>
-                <SelectItem value="daily-use">Daily Use</SelectItem>
-                <SelectItem value="pooja">Pooja</SelectItem> */}
                 <SelectItem value="all">All Categories</SelectItem>
                 {categories?.map((category: any) => (
-                  <SelectItem key={category.id} value={category.name}>
+                  <SelectItem key={category.name} value={category.id}>
                     {category.name}
                   </SelectItem>
                 ))}
@@ -180,13 +194,13 @@ export default function AddProductModal({
               <Input
                 id="price"
                 type="number"
-                step="0.01"
-                min="0.01"
+                step="1"
+                min="1"
                 value={formData.price}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, price: e.target.value }))
+                  setFormData((prev) => ({ ...prev, price: Number.parseInt(e.target.value) }))
                 }
-                placeholder="0.00"
+                placeholder="0"
                 required
               />
             </div>
@@ -198,7 +212,7 @@ export default function AddProductModal({
                 min="0"
                 value={formData.stock}
                 onChange={(e) =>
-                  setFormData((prev) => ({ ...prev, stock: e.target.value }))
+                  setFormData((prev) => ({ ...prev, stock: Number.parseInt(e.target.value) }))
                 }
                 placeholder="0"
                 required
@@ -216,7 +230,7 @@ export default function AddProductModal({
               onChange={(e) =>
                 setFormData((prev) => ({
                   ...prev,
-                  lowStockThreshold: e.target.value,
+                  lowStockThreshold: Number.parseInt(e.target.value),
                 }))
               }
               placeholder="10"

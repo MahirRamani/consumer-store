@@ -22,6 +22,30 @@ export interface Product {
   createdAt: Date
 }
 
+export interface AddProduct {
+  name: string
+  category: string
+  price: number
+  stock: number
+  lowStockThreshold: number
+  barcode?: string
+  description?: string
+}
+
+export interface EditProduct {
+  id: string
+  name: string
+  categoryId: string
+  category: string
+  price: number
+  stock: number
+  lowStockThreshold: number
+  barcode?: string
+  description?: string
+  isActive: boolean
+  createdAt: Date
+}
+
 export interface Category {
   id: string
   name: string

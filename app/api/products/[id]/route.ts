@@ -16,7 +16,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     return NextResponse.json({
       id: product._id.toString(),
       name: product.name,
-      category: product.category,
+      categoryId: product.categoryId._id.toString(),
       price: product.price,
       stock: product.stock,
       lowStockThreshold: product.lowStockThreshold,
@@ -55,7 +55,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     return NextResponse.json({
       id: product._id.toString(),
       name: product.name,
-      category: product.category,
+      categoryId: product.categoryId._id.toString(),
       price: product.price,
       stock: product.stock,
       lowStockThreshold: product.lowStockThreshold,

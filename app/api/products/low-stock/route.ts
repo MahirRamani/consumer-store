@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import dbConnect from "@/lib/mongodb"
-import { Product } from "@/lib/models/product"
+import { Product } from "@/lib/models"
 
 export async function GET() {
   try {
@@ -9,13 +9,17 @@ export async function GET() {
     const products = await Product.find({
       isActive: true,
       $expr: { $lte: ["$stock", "$lowStockThreshold"] },
-    }).sort({ createdAt: -1 })
+    }).sort({ createdAt: -1 }).populate('categoryId', 'name')
 
+    console.log("Low stock products:", products);
+    
+    
     return NextResponse.json(
       products.map((product) => ({
         id: product._id.toString(),
         name: product.name,
-        category: product.category,
+        category: product.categoryId?.name, // Get category name from populated data
+        categoryId: product.categoryId?._id.toString(),
         price: product.price,
         stock: product.stock,
         lowStockThreshold: product.lowStockThreshold,

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
-import { ScanBarcode, LogOut } from "lucide-react"
+import { LogOut } from "lucide-react"
 import { useAuthStore } from "@/lib/store/auth-store"
 import { useQuery } from "@tanstack/react-query"
 import StudentLookup from "@/components/seller/student-lookup"
@@ -97,9 +97,6 @@ export default function SellerInterface() {
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="px-6 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <div className="bg-green-500 text-white w-10 h-10 rounded-lg flex items-center justify-center">
-              <ScanBarcode className="w-6 h-6" />
-            </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">Point of Sale</h1>
               <p className="text-sm text-gray-600">Hostel Store Transactions</p>

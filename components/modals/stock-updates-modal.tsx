@@ -10,7 +10,10 @@ interface StockUpdate {
   product: {
     id: string
     name: string
-    category: string
+    category: {
+      id: string
+      name: string
+    }
     price: number
     currentStock: number
   }
@@ -49,7 +52,7 @@ export default function StockUpdatesModal({ open, onOpenChange, updates }: Stock
                       <div className="flex items-center gap-2 mb-2">
                         <h3 className="font-semibold text-lg text-gray-900">{update.product.name}</h3>
                         <Badge variant="outline" className="capitalize">
-                          {update.product.category.replace("-", " ")}
+                          {update.product.category?.name}
                         </Badge>
                       </div>
 
