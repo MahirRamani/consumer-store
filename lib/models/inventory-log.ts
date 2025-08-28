@@ -1,7 +1,7 @@
 import mongoose, { Schema, type Document } from "mongoose"
 
 export interface IInventoryLog extends Document {
-  productId: mongoose.Types.ObjectId
+  subProductId: mongoose.Types.ObjectId
   action: "restock" | "sale" | "adjustment"
   quantityChange: number
   previousStock: number
@@ -12,7 +12,7 @@ export interface IInventoryLog extends Document {
 }
 
 const InventoryLogSchema = new Schema<IInventoryLog>({
-  productId: {
+  subProductId: {
     type: Schema.Types.ObjectId,
     ref: "Product",
     required: true,

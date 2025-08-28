@@ -11,7 +11,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     const body = await request.json()
     const { quantity, reason } = updateStockSchema.parse(body)
     const { id } = await params
-
+    
     const product = await Product.findById(id)
     if (!product) {
       return NextResponse.json({ message: "Product not found" }, { status: 404 })

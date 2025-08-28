@@ -1,63 +1,98 @@
-  import mongoose, { Schema, type Document } from "mongoose"
+import mongoose from "mongoose"
 
-  export interface IProduct extends Document {
-    name: string
-    category: string
-    categoryId: mongoose.Types.ObjectId
-    price: number
-    stock: number
-    lowStockThreshold: number
-    barcode?: string
-    description?: string
-    isActive: boolean
-    createdAt: Date
-  }
-
-  const ProductSchema = new Schema<IProduct>({
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+const productSchema = new mongoose.Schema(
+  {
     categoryId: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
       required: true,
     },
-    price: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    stock: {
-      type: Number,
-      required: true,
-      min: 0,
-      default: 0,
-    },
-    lowStockThreshold: {
-      type: Number,
-      required: true,
-      min: 0,
-      default: 10,
-    },
-    barcode: {
+    name: {
       type: String,
-      trim: true,
+      required: true,
     },
     description: {
       type: String,
-      trim: true,
     },
     isActive: {
       type: Boolean,
-      required: true,
-      default: true,
+      default: false,
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-  })
+  },
+  {
+    timestamps: true,
+  },
+)
 
-  export const Product = mongoose.models.Product || mongoose.model<IProduct>("Product", ProductSchema)
+productSchema.index({ categoryId: 1 })
+productSchema.index({ name: "text", description: "text" })
+productSchema.index({ sku: 1 })
+productSchema.index({ barcode: 1 })
+
+export const Product = mongoose.models.Product || mongoose.model("Product", productSchema)
+
+
+
+// import mongoose, { Schema, type Document } from "mongoose"
+
+  // export interface IProduct extends Document {
+  //   name: string
+  //   category: string
+  //   categoryId: mongoose.Types.ObjectId
+  //   price: number
+  //   stock: number
+  //   lowStockThreshold: number
+  //   barcode?: string
+  //   description?: string
+  //   isActive: boolean
+  //   createdAt: Date
+  // }
+
+  // const ProductSchema = new Schema<IProduct>({
+  //   name: {
+  //     type: String,
+  //     required: true,
+  //     trim: true,
+  //   },
+  //   categoryId: {
+  //     type: Schema.Types.ObjectId,
+  //     ref: "Category",
+  //     required: true,
+  //   },
+  //   price: {
+  //     type: Number,
+  //     required: true,
+  //     min: 0,
+  //   },
+  //   stock: {
+  //     type: Number,
+  //     required: true,
+  //     min: 0,
+  //     default: 0,
+  //   },
+  //   lowStockThreshold: {
+  //     type: Number,
+  //     required: true,
+  //     min: 0,
+  //     default: 10,
+  //   },
+  //   barcode: {
+  //     type: String,
+  //     trim: true,
+  //   },
+  //   description: {
+  //     type: String,
+  //     trim: true,
+  //   },
+  //   isActive: {
+  //     type: Boolean,
+  //     required: true,
+  //     default: true,
+  //   },
+  //   createdAt: {
+  //     type: Date,
+  //     default: Date.now,
+  //   },
+  // })
+
+  // export const Product = mongoose.models.Product || mongoose.model<IProduct>("Product", ProductSchema)

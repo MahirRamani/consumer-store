@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/hostel-store"
+const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/consumer-store"
 
 console.log(`MONGODB_URI: ${MONGODB_URI}`)
 

@@ -1,6 +1,7 @@
 import { type NextRequest, NextResponse } from "next/server"
 import dbConnect from "@/lib/mongodb"
 import { Product } from "@/lib/models/product"
+import { Category } from "@/lib/models/category"
 import { createProductSchema } from "@/lib/validations/product"
 
 export async function GET(request: NextRequest) {
