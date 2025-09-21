@@ -391,6 +391,9 @@ export default function SubProductsTab() {
                       Parent Product
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Category
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Size/Weight
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -401,6 +404,9 @@ export default function SubProductsTab() {
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Created At
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Actions
@@ -439,6 +445,9 @@ export default function SubProductsTab() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {subProduct.parentProduct?.name || getProductName(subProduct.productId)}
                       </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 ">
+                        {subProduct.parentProduct?.category?.name || "🤔?"}
+                      </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm text-gray-900">
                           <span className="font-medium">{subProduct.size}</span>
@@ -451,7 +460,7 @@ export default function SubProductsTab() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
-                        ₹{subProduct.price.toFixed(2)}
+                        ₹ {subProduct.price.toFixed(2)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
@@ -480,6 +489,13 @@ export default function SubProductsTab() {
                         >
                           {subProduct.isActive ? "Active" : "Disabled"}
                         </Badge>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-500">
+                        {new Date(subProduct.createdAt).toLocaleDateString('en-GB',{
+                          day: '2-digit',
+                          month: '2-digit',
+                          year: 'numeric'
+                        }) || "🤔?"}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         <div className="flex space-x-2">

@@ -236,10 +236,7 @@ export default function ProductsTab() {
                     Category
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Price
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Stock
+                    Created At
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
@@ -271,24 +268,14 @@ export default function ProductsTab() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 capitalize">
                       {getCategoryName(product.categoryId)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
-                      ₹{product.price.toFixed(2)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <span
-                          className={`text-sm font-medium ${
-                            product.stock <= product.lowStockThreshold ? "text-red-600" : "text-gray-900"
-                          }`}
-                        >
-                          {product.stock}
-                        </span>
-                        {product.stock <= product.lowStockThreshold && (
-                          <AlertTriangle className="w-4 h-4 text-red-500 ml-1" />
-                        )}
-                      </div>
-                    </td>
+                    </td>                    
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 capitalize">
+                      {new Date(product.createdAt).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                      }) || "🤔?"}
+                    </td>                    
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Badge
                         variant={product.isActive ? "default" : "secondary"}

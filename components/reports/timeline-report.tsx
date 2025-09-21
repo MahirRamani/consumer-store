@@ -247,7 +247,11 @@ export function TimelineReport() {
                           {lastTransaction ? (
                             <div>
                               <div className="font-medium">
-                                {new Date(lastTransaction.createdAt).toLocaleDateString()}
+                                {new Date(lastTransaction.createdAt).toLocaleDateString('en-GB', {
+                                  day: '2-digit',
+                                  month: '2-digit',
+                                  year: 'numeric'
+                                }) || "🤔?"}
                               </div>
                               <div className="text-xs">{new Date(lastTransaction.createdAt).toLocaleTimeString()}</div>
                             </div>

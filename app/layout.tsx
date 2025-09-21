@@ -8,8 +8,8 @@ import { Providers } from "@/components/providers"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Hostel Store Management System",
-  description: "Complete hostel store management solution",
+  title: "Consumer Store",
+  description: "Consumer Store Management Solution",
 }
 
 export default function RootLayout({

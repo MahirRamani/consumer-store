@@ -64,7 +64,11 @@ export default function SuccessModal({ open, onOpenChange, transactionData, onCl
               </div>
               <div class="line"></div>
               <p><strong>Transaction ID:</strong> ${transactionData.id}</p>
-              <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+              <p><strong>Date:</strong> ${new Date().toLocaleDateString('en-GB', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric'
+                }) || "🤔?"}</p>
               <p><strong>Time:</strong> ${new Date().toLocaleTimeString()}</p>
               <p><strong>Student:</strong> ${transactionData.student}</p>
               <div class="line"></div>

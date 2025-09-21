@@ -1,8 +1,9 @@
 import mongoose, { Schema, type Document } from "mongoose"
 
 export interface IInventoryLog extends Document {
-  subProductId: mongoose.Types.ObjectId
-  action: "restock" | "sale" | "adjustment"
+  productId?: mongoose.Types.ObjectId
+  subProductId?: mongoose.Types.ObjectId
+  action: "stock_in" | "stock_out" | "adjustment"
   quantityChange: number
   previousStock: number
   newStock: number
@@ -11,45 +12,114 @@ export interface IInventoryLog extends Document {
   createdAt: Date
 }
 
-const InventoryLogSchema = new Schema<IInventoryLog>({
-  subProductId: {
-    type: Schema.Types.ObjectId,
-    ref: "Product",
-    required: true,
+const InventoryLogSchema = new Schema<IInventoryLog>(
+  {
+    productId: {
+      type: Schema.Types.ObjectId,
+      ref: "Product",
+    },
+    subProductId: {
+      type: Schema.Types.ObjectId,
+      ref: "SubProduct",
+    },
+    action: {
+      type: String,
+      enum: ["Sale", "Perchase" ,"stock_in", "stock_out", "adjustment"],
+      required: true,
+    },
+    quantityChange: {
+      type: Number,
+      required: true,
+    },
+    previousStock: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    newStock: {
+      type: Number,
+      required: true,
+      min: 0,
+    },
+    reason: {
+      type: String,
+      trim: true,
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
-  action: {
-    type: String,
-    required: true,
-    enum: ["restock", "sale", "adjustment"],
+  {
+    timestamps: true,
   },
-  quantityChange: {
-    type: Number,
-    required: true,
-  },
-  previousStock: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
-  newStock: {
-    type: Number,
-    required: true,
-    min: 0,
-  },
-  reason: {
-    type: String,
-    trim: true,
-  },
-  userId: {
-    type: Schema.Types.ObjectId,
-    ref: "User",
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-})
+)
+
+// Create indexes
+InventoryLogSchema.index({ productId: 1 })
+InventoryLogSchema.index({ subProductId: 1 })
+InventoryLogSchema.index({ action: 1 })
+InventoryLogSchema.index({ createdAt: -1 })
+InventoryLogSchema.index({ userId: 1 })
 
 export const InventoryLog =
   mongoose.models.InventoryLog || mongoose.model<IInventoryLog>("InventoryLog", InventoryLogSchema)
+
+
+
+// import mongoose, { Schema, type Document } from "mongoose"
+
+// export interface IInventoryLog extends Document {
+//   subProductId: mongoose.Types.ObjectId
+//   action: "restock" | "sale" | "adjustment"
+//   quantityChange: number
+//   previousStock: number
+//   newStock: number
+//   reason?: string
+//   userId: mongoose.Types.ObjectId
+//   createdAt: Date
+// }
+
+// const InventoryLogSchema = new Schema<IInventoryLog>({
+//   subProductId: {
+//     type: Schema.Types.ObjectId,
+//     ref: "Product",
+//     required: true,
+//   },
+//   action: {
+//     type: String,
+//     required: true,
+//     enum: ["restock", "sale", "adjustment"],
+//   },
+//   quantityChange: {
+//     type: Number,
+//     required: true,
+//   },
+//   previousStock: {
+//     type: Number,
+//     required: true,
+//     min: 0,
+//   },
+//   newStock: {
+//     type: Number,
+//     required: true,
+//     min: 0,
+//   },
+//   reason: {
+//     type: String,
+//     trim: true,
+//   },
+//   userId: {
+//     type: Schema.Types.ObjectId,
+//     ref: "User",
+//     required: true,
+//   },
+//   createdAt: {
+//     type: Date,
+//     default: Date.now,
+//   },
+// })
+
+// export const InventoryLog =
+//   mongoose.models.InventoryLog || mongoose.model<IInventoryLog>("InventoryLog", InventoryLogSchema)

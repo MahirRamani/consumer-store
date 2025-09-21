@@ -15,7 +15,7 @@ export async function GET() {
       transactions.map((transaction) => ({
         id: transaction._id.toString(),
         studentId: transaction.studentId._id.toString(),
-        sellerId: transaction.sellerId.toString(),
+        sellerId: transaction.sellerId?.toString(),
         items: transaction.items,
         totalAmount: transaction.totalAmount,
         status: transaction.status,

@@ -46,7 +46,7 @@ export default function LowStockModal({ open, onOpenChange, products }: LowStock
                           <Badge variant="outline" className="capitalize text-xs">
                             {product.category.replace("-", " ")}
                           </Badge>
-                          <span className="text-sm text-gray-600">₹{product.price.toFixed(2)}</span>
+                          <span className="text-sm text-gray-600">₹{product.price?.toFixed(2)}</span>
                         </div>
                       </div>
                     </div>

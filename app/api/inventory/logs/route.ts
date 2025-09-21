@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import dbConnect from "@/lib/mongodb"
 import { InventoryLog } from "@/lib/models/inventory-log"
 import mongoose from "mongoose"
+import { Product, SubProduct } from "@/lib/models"
 
 export async function GET(request: NextRequest) {
   try {
@@ -55,10 +56,25 @@ export async function GET(request: NextRequest) {
     // Search filter - build MongoDB text search or regex
     if (search) {
       // First, get product IDs that match the search term
-      const Product = require("@/lib/models/product")
+      const matchingSubProducts = await SubProduct.find({
+        $or: [
+          { name: { $regex: search, $options: "i" } },
+          { size: { $regex: search, $options: "i" } }
+        ]
+      }).select("_id")
+
+      // Also search in parent products
       const matchingProducts = await Product.find({
         name: { $regex: search, $options: "i" }
       }).select("_id")
+      
+      if (matchingProducts.length > 0) {
+        const subProductsFromParents = await SubProduct.find({
+          productId: { $in: matchingProducts.map((p: { _id: mongoose.Types.ObjectId }) => p._id) }
+        }).select("_id")
+        
+        matchingSubProducts.push(...subProductsFromParents)
+      }
       
       if (matchingProducts.length > 0) {
         query.productId = { $in: matchingProducts.map((p: { _id: mongoose.Types.ObjectId }) => p._id) }
@@ -88,11 +104,15 @@ export async function GET(request: NextRequest) {
     // Get paginated results
     const inventoryLogs = await InventoryLog.find(query)
       .populate({
-        path: "productId",
-        select: "name categoryId",
+        path: "subProductId", // Updated field name
+        select: "name size price stock productId",
         populate: {
-          path: "categoryId",
-          select: "name",
+          path: "productId",
+          select: "name categoryId",
+          populate: {
+            path: "categoryId",
+            select: "name",
+          },
         },
       })
       .sort({ createdAt: -1 })
@@ -104,7 +124,7 @@ export async function GET(request: NextRequest) {
     
     const formattedLogs = inventoryLogs.map((log) => ({
       id: log._id.toString(),
-      productId: log.productId._id.toString(),
+      subProductId: log.subProductId._id.toString(),
       action: log.action,
       quantityChange: log.quantityChange,
       previousStock: log.previousStock,
@@ -112,8 +132,10 @@ export async function GET(request: NextRequest) {
       reason: log.reason,
       createdAt: log.createdAt,
       product: {
-        name: log.productId.name,
-        category: log.productId.categoryId?.name || "Unknown",
+        name: `${log.subProductId.productId?.name} - ${log.subProductId.name}`, // Combined name
+        size: log.subProductId.size,
+        price: log.subProductId.price,
+        category: log.subProductId.productId?.categoryId?.name || "🤔❓",
       },
     }))
 
@@ -141,6 +163,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ message: "Failed to fetch inventory logs" }, { status: 500 })
   }
 }
+
+
 
 // import { type NextRequest, NextResponse } from "next/server"
 // import dbConnect from "@/lib/mongodb"

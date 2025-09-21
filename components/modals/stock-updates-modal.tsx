@@ -83,7 +83,11 @@ export default function StockUpdatesModal({ open, onOpenChange, updates }: Stock
                         <div className="flex items-center gap-1">
                           <Calendar className="w-4 h-4" />
                           <span>
-                            {new Date(update.createdAt).toLocaleDateString()} at{" "}
+                            {new Date(update.createdAt).toLocaleDateString('en-GB', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric'
+                            }) || "🤔?"} at{" "}
                             {new Date(update.createdAt).toLocaleTimeString()}
                           </span>
                         </div>

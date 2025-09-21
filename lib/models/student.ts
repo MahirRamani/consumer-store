@@ -1,52 +1,127 @@
-import mongoose, { Schema, type Document } from "mongoose";
+import mongoose, { Schema, type Document } from "mongoose"
 
 export interface IStudent extends Document {
-  name: string;
-  rollNumber: string;
-  standard: string;
-  year: number;
-  balance: number;
-  status: "active" | "inactive";
-  createdAt: Date;
+  rollNumber: string
+  name: string
+  email?: string
+  phone?: string
+  standard: string
+  year: number
+  balance: number
+  isActive: boolean
+  createdAt: Date
+  updatedAt: Date
 }
 
-const StudentSchema = new Schema<IStudent>({
-  name: {
-    type: String,
-    required: true,
-    trim: true,
+const StudentSchema = new Schema<IStudent>(
+  {
+    rollNumber: {
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
+    },
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      sparse: true,
+    },
+    phone: {
+      type: String,
+      trim: true,
+    },
+    standard: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    year: {
+      type: Number,
+      required: true,
+    },
+    balance: {
+      type: Number,
+      required: true,
+      min: 0,
+      default: 0,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
   },
-  rollNumber: {
-    type: String,
-    required: true,
-    unique: true,
-    trim: true,
+  {
+    timestamps: true,
   },
-  standard: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  // year: {
-  //   type: Number,
-  //   required: true,
-  // },
-  balance: {
-    type: Number,
-    required: true,
-    default: 0,
-  },
-  status: {
-    type: String,
-    required: true,
-    enum: ["active", "inactive"],
-    default: "active",
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+)
 
-export const Student =
-  mongoose.models.Student || mongoose.model<IStudent>("Student", StudentSchema);
+// Create indexes
+StudentSchema.index({ rollNumber: 1 })
+StudentSchema.index({ name: 1 })
+StudentSchema.index({ email: 1 }, { sparse: true })
+StudentSchema.index({ isActive: 1 })
+StudentSchema.index({ standard: 1 })
+StudentSchema.index({ year: 1 })
+
+export const Student = mongoose.models.Student || mongoose.model<IStudent>("Student", StudentSchema)
+
+
+
+// import mongoose, { Schema, type Document } from "mongoose";
+
+// export interface IStudent extends Document {
+//   name: string;
+//   rollNumber: string;
+//   standard: string;
+//   year: number;
+//   balance: number;
+//   status: "active" | "inactive";
+//   createdAt: Date;
+// }
+
+// const StudentSchema = new Schema<IStudent>({
+//   name: {
+//     type: String,
+//     required: true,
+//     trim: true,
+//   },
+//   rollNumber: {
+//     type: String,
+//     required: true,
+//     unique: true,
+//     trim: true,
+//   },
+//   standard: {
+//     type: String,
+//     required: true,
+//     trim: true,
+//   },
+//   // year: {
+//   //   type: Number,
+//   //   required: true,
+//   // },
+//   balance: {
+//     type: Number,
+//     required: true,
+//     default: 0,
+//   },
+//   status: {
+//     type: String,
+//     required: true,
+//     enum: ["active", "inactive"],
+//     default: "active",
+//   },
+//   createdAt: {
+//     type: Date,
+//     default: Date.now,
+//   },
+// });
+
+// export const Student =
+//   mongoose.models.Student || mongoose.model<IStudent>("Student", StudentSchema);

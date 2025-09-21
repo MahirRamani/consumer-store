@@ -6,7 +6,14 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   try {
     await dbConnect()
 
-    const subProduct = await SubProduct.findById(params.id).populate("productId", "name categoryId")
+    const subProduct = await SubProduct.findById(params.id).populate({
+      path: "productId",
+      select: "name categoryId",
+      populate: {
+        path: "categoryId",
+        select: "name description"
+      }
+    })
 
     if (!subProduct) {
       return NextResponse.json({ message: "Sub-product not found" }, { status: 404 })
@@ -18,13 +25,17 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       parentProduct: {
         id: subProduct.productId._id.toString(),
         name: subProduct.productId.name,
-        categoryId: subProduct.productId.categoryId.toString(),
+        categoryId: subProduct.productId.categoryId._id.toString(),
+        category: {
+          id: subProduct.productId.categoryId._id.toString(),
+          name: subProduct.productId.categoryId.name,
+          description: subProduct.productId.categoryId.description
+        }
       },
       name: subProduct.name,
       size: subProduct.size,
       weight: subProduct.weight,
       volume: subProduct.volume,
-      sku: subProduct.sku,
       barcode: subProduct.barcode,
       description: subProduct.description,
       price: subProduct.price,
@@ -44,7 +55,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     await dbConnect()
 
     const body = await request.json()
-    const { name, size, weight, volume, sku, barcode, description, price, stock, lowStockThreshold, isActive } = body
+    const { name, size, weight, volume, barcode, description, price, stock, lowStockThreshold, isActive } = body
 
     const subProduct = await SubProduct.findByIdAndUpdate(
       params.id,
@@ -53,7 +64,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         size,
         weight,
         volume,
-        sku,
+        // sku,
         barcode,
         description,
         price,
@@ -62,7 +73,14 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
         isActive,
       },
       { new: true },
-    ).populate("productId", "name categoryId")
+    ).populate({
+      path: "productId",
+      select: "name categoryId",
+      populate: {
+        path: "categoryId",
+        select: "name description"
+      }
+    })
 
     if (!subProduct) {
       return NextResponse.json({ message: "Sub-product not found" }, { status: 404 })
@@ -74,13 +92,17 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       parentProduct: {
         id: subProduct.productId._id.toString(),
         name: subProduct.productId.name,
-        categoryId: subProduct.productId.categoryId.toString(),
+        categoryId: subProduct.productId.categoryId._id.toString(),
+        category: {
+          id: subProduct.productId.categoryId._id.toString(),
+          name: subProduct.productId.categoryId.name,
+          description: subProduct.productId.categoryId.description
+        }
       },
       name: subProduct.name,
       size: subProduct.size,
       weight: subProduct.weight,
       volume: subProduct.volume,
-      sku: subProduct.sku,
       barcode: subProduct.barcode,
       description: subProduct.description,
       price: subProduct.price,

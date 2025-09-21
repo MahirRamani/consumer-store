@@ -347,7 +347,11 @@ export default function TransactionsTab() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <div>
-                        <p>{new Date(transaction.createdAt).toLocaleDateString()}</p>
+                        <p>{new Date(transaction.createdAt).toLocaleDateString('en-GB',{
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                          }) || "🤔?"}</p>
                         <p className="text-xs">{new Date(transaction.createdAt).toLocaleTimeString()}</p>
                       </div>
                     </td>

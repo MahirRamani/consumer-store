@@ -1,370 +1,370 @@
-"use client"
+// "use client"
 
-import { useState } from "react"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Switch } from "@/components/ui/switch"
-import { Plus, Search, AlertTriangle, Trash2, Eye, EyeOff, Download, Edit, CreditCard, Minus } from "lucide-react"
-import { toast } from "sonner"
-import  AddStudentModal from "@/components/modals/add-student-modal"
-import  EditStudentModal from "@/components/modals/edit-student-modal"
-import  TopUpModal from "@/components/modals/top-up-modal"
-import  DeductBalanceModal from "@/components/modals/deduct-balance-modal"
-import type { Student } from "@/lib/types"
+// import { useState } from "react"
+// import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+// import { Button } from "@/components/ui/button"
+// import { Input } from "@/components/ui/input"
+// import { Label } from "@/components/ui/label"
+// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+// import { Badge } from "@/components/ui/badge"
+// import { Switch } from "@/components/ui/switch"
+// import { Plus, Search, AlertTriangle, Trash2, Eye, EyeOff, Download, Edit, CreditCard, Minus } from "lucide-react"
+// import { toast } from "sonner"
+// import  AddStudentModal from "@/components/modals/add-student-modal"
+// import  EditStudentModal from "@/components/modals/edit-student-modal"
+// import  TopUpModal from "@/components/modals/top-up-modal"
+// import  DeductBalanceModal from "@/components/modals/deduct-balance-modal"
+// import type { Student } from "@/lib/types"
 
-export function StudentManagement() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [showInactive, setShowInactive] = useState(false)
-  const [showAddModal, setShowAddModal] = useState(false)
-  const [showEditModal, setShowEditModal] = useState(false)
-  const [showTopUpModal, setShowTopUpModal] = useState(false)
-  const [showDeductModal, setShowDeductModal] = useState(false)
-  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
-  const queryClient = useQueryClient()
+// export function StudentManagement() {
+//   const [searchTerm, setSearchTerm] = useState("")
+//   const [showInactive, setShowInactive] = useState(false)
+//   const [showAddModal, setShowAddModal] = useState(false)
+//   const [showEditModal, setShowEditModal] = useState(false)
+//   const [showTopUpModal, setShowTopUpModal] = useState(false)
+//   const [showDeductModal, setShowDeductModal] = useState(false)
+//   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null)
+//   const queryClient = useQueryClient()
 
-  const { data: studentsResponse = { students: [] }, isLoading } = useQuery({
-    queryKey: ["students", showInactive],
-    queryFn: async () => {
-      const params = new URLSearchParams()
-      if (showInactive) {
-        params.append("includeInactive", "true")
-      }
-      const response = await fetch(`/api/students?${params}`)
-      if (!response.ok) throw new Error("Failed to fetch students")
-      return response.json()
-    },
-  })
+//   const { data: studentsResponse = { students: [] }, isLoading } = useQuery({
+//     queryKey: ["students", showInactive],
+//     queryFn: async () => {
+//       const params = new URLSearchParams()
+//       if (showInactive) {
+//         params.append("includeInactive", "true")
+//       }
+//       const response = await fetch(`/api/students?${params}`)
+//       if (!response.ok) throw new Error("Failed to fetch students")
+//       return response.json()
+//     },
+//   })
 
-  const students = studentsResponse.students || []
+//   const students = studentsResponse.students || []
 
-  const deleteStudentMutation = useMutation({
-    mutationFn: async (studentId: string) => {
-      const response = await fetch(`/api/students/${studentId}`, {
-        method: "DELETE",
-      })
-      if (!response.ok) throw new Error("Failed to delete student")
-      return response.json()
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["students"] })
-      toast.success("Student deleted successfully.")
-    },
-    onError: () => {
-      toast.error("Failed to delete student.")
-    },
-  })
+//   const deleteStudentMutation = useMutation({
+//     mutationFn: async (studentId: string) => {
+//       const response = await fetch(`/api/students/${studentId}`, {
+//         method: "DELETE",
+//       })
+//       if (!response.ok) throw new Error("Failed to delete student")
+//       return response.json()
+//     },
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: ["students"] })
+//       toast.success("Student deleted successfully.")
+//     },
+//     onError: () => {
+//       toast.error("Failed to delete student.")
+//     },
+//   })
 
-  const updateStudentMutation = useMutation({
-    mutationFn: async ({ studentId, data }: { studentId: string; data: any }) => {
-      const response = await fetch(`/api/students/${studentId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      })
-      if (!response.ok) throw new Error("Failed to update student")
-      return response.json()
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["students"] })
-      toast.success("Student updated successfully.")
-    },
-    onError: () => {
-      toast.error("Failed to update student.")
-    },
-  })
+//   const updateStudentMutation = useMutation({
+//     mutationFn: async ({ studentId, data }: { studentId: string; data: any }) => {
+//       const response = await fetch(`/api/students/${studentId}`, {
+//         method: "PATCH",
+//         headers: { "Content-Type": "application/json" },
+//         body: JSON.stringify(data),
+//       })
+//       if (!response.ok) throw new Error("Failed to update student")
+//       return response.json()
+//     },
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: ["students"] })
+//       toast.success("Student updated successfully.")
+//     },
+//     onError: () => {
+//       toast.error("Failed to update student.")
+//     },
+//   })
 
-  const handleToggleActive = (studentId: string, currentIsActive: boolean) => {
-    updateStudentMutation.mutate({ studentId, data: { isActive: !currentIsActive } })
-  }
+//   const handleToggleActive = (studentId: string, currentIsActive: boolean) => {
+//     updateStudentMutation.mutate({ studentId, data: { isActive: !currentIsActive } })
+//   }
 
-  const handleDeleteStudent = (studentId: string, studentName: string) => {
-    if (window.confirm(`Are you sure you want to delete "${studentName}"? This action cannot be undone.`)) {
-      deleteStudentMutation.mutate(studentId)
-    }
-  }
+//   const handleDeleteStudent = (studentId: string, studentName: string) => {
+//     if (window.confirm(`Are you sure you want to delete "${studentName}"? This action cannot be undone.`)) {
+//       deleteStudentMutation.mutate(studentId)
+//     }
+//   }
 
-  const handleEditStudent = (student: Student) => {
-    setSelectedStudent(student)
-    setShowEditModal(true)
-  }
+//   const handleEditStudent = (student: Student) => {
+//     setSelectedStudent(student)
+//     setShowEditModal(true)
+//   }
 
-  const handleTopUp = (student: Student) => {
-    setSelectedStudent(student)
-    setShowTopUpModal(true)
-  }
+//   const handleTopUp = (student: Student) => {
+//     setSelectedStudent(student)
+//     setShowTopUpModal(true)
+//   }
 
-  const handleDeduct = (student: Student) => {
-    setSelectedStudent(student)
-    setShowDeductModal(true)
-  }
+//   const handleDeduct = (student: Student) => {
+//     setSelectedStudent(student)
+//     setShowDeductModal(true)
+//   }
 
-  const handleExport = async () => {
-    try {
-      const response = await fetch("/api/students/export?format=csv")
-      if (!response.ok) throw new Error("Failed to export")
+//   const handleExport = async () => {
+//     try {
+//       const response = await fetch("/api/students/export?format=csv")
+//       if (!response.ok) throw new Error("Failed to export")
 
-      const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement("a")
-      a.href = url
-      a.download = `students-${new Date().toISOString().split("T")[0]}.csv`
-      document.body.appendChild(a)
-      a.click()
-      window.URL.revokeObjectURL(url)
-      document.body.removeChild(a)
+//       const blob = await response.blob()
+//       const url = window.URL.createObjectURL(blob)
+//       const a = document.createElement("a")
+//       a.href = url
+//       a.download = `students-${new Date().toISOString().split("T")[0]}.csv`
+//       document.body.appendChild(a)
+//       a.click()
+//       window.URL.revokeObjectURL(url)
+//       document.body.removeChild(a)
 
-      toast.success("Students exported successfully!")
-    } catch (error) {
-      toast.error("Failed to export students")
-    }
-  }
+//       toast.success("Students exported successfully!")
+//     } catch (error) {
+//       toast.error("Failed to export students")
+//     }
+//   }
 
-  const onSuccess = () => {
-    queryClient.invalidateQueries({ queryKey: ["students"] })
-    setShowTopUpModal(false)
-    setShowDeductModal(false)
-    setShowEditModal(false)
-    setShowAddModal(false)
-  }
+//   const onSuccess = () => {
+//     queryClient.invalidateQueries({ queryKey: ["students"] })
+//     setShowTopUpModal(false)
+//     setShowDeductModal(false)
+//     setShowEditModal(false)
+//     setShowAddModal(false)
+//   }
 
-  const filteredStudents = students.filter((student: Student) => {
-    const matchesSearch =
-      student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.rollNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (student.email && student.email.toLowerCase().includes(searchTerm.toLowerCase()))
-    const matchesStatus = showInactive || student.isActive
-    return matchesSearch && matchesStatus
-  })
+//   const filteredStudents = students.filter((student: Student) => {
+//     const matchesSearch =
+//       student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//       student.rollNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+//       (student.email && student.email.toLowerCase().includes(searchTerm.toLowerCase()))
+//     const matchesStatus = showInactive || student.isActive
+//     return matchesSearch && matchesStatus
+//   })
 
-  if (isLoading) {
-    return <div className="text-center py-8">Loading students...</div>
-  }
+//   if (isLoading) {
+//     return <div className="text-center py-8">Loading students...</div>
+//   }
 
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">Student Management</h2>
-        <div className="flex space-x-2">
-          <Button onClick={handleExport} variant="outline">
-            <Download className="w-4 h-4 mr-2" />
-            Export
-          </Button>
-          <Button onClick={() => setShowAddModal(true)} className="bg-green-500 hover:bg-green-600 text-white">
-            <Plus className="w-4 h-4 mr-2" />
-            Add Student
-          </Button>
-        </div>
-      </div>
+//   return (
+//     <div className="space-y-6">
+//       <div className="flex justify-between items-center">
+//         <h2 className="text-2xl font-bold text-gray-900">Student Management</h2>
+//         <div className="flex space-x-2">
+//           <Button onClick={handleExport} variant="outline">
+//             <Download className="w-4 h-4 mr-2" />
+//             Export
+//           </Button>
+//           <Button onClick={() => setShowAddModal(true)} className="bg-green-500 hover:bg-green-600 text-white">
+//             <Plus className="w-4 h-4 mr-2" />
+//             Add Student
+//           </Button>
+//         </div>
+//       </div>
 
-      {/* Search and Filter */}
-      <Card>
-        <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label className="block text-sm font-medium text-gray-700 mb-2">Search Students</Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Name, roll number, or email..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <div>
-              <Label className="block text-sm font-medium text-gray-700 mb-2">Show Inactive</Label>
-              <div className="flex items-center space-x-2 mt-3">
-                <Switch checked={showInactive} onCheckedChange={setShowInactive} />
-                <span className="text-sm text-gray-600">Include inactive students</span>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+//       {/* Search and Filter */}
+//       <Card>
+//         <CardContent className="p-6">
+//           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+//             <div>
+//               <Label className="block text-sm font-medium text-gray-700 mb-2">Search Students</Label>
+//               <div className="relative">
+//                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+//                 <Input
+//                   placeholder="Name, roll number, or email..."
+//                   value={searchTerm}
+//                   onChange={(e) => setSearchTerm(e.target.value)}
+//                   className="pl-10"
+//                 />
+//               </div>
+//             </div>
+//             <div>
+//               <Label className="block text-sm font-medium text-gray-700 mb-2">Show Inactive</Label>
+//               <div className="flex items-center space-x-2 mt-3">
+//                 <Switch checked={showInactive} onCheckedChange={setShowInactive} />
+//                 <span className="text-sm text-gray-600">Include inactive students</span>
+//               </div>
+//             </div>
+//           </div>
+//         </CardContent>
+//       </Card>
 
-      {/* Students List */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold text-gray-900">Students Directory</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Student
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Roll Number
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Contact
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Balance
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {filteredStudents.map((student: Student) => (
-                  <tr key={student.id} className={!student.isActive ? "bg-gray-50 opacity-75" : ""}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-lg">
-                          👤
-                        </div>
-                        <div className="ml-3">
-                          <p className={`text-sm font-medium ${student.isActive ? "text-gray-900" : "text-gray-500"}`}>
-                            {student.name}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      {student.rollNumber}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <div>
-                        {student.email && <div>{student.email}</div>}
-                        {student.phone && <div className="text-gray-500">{student.phone}</div>}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <span
-                          className={`text-sm font-medium ${student.balance < 0 ? "text-red-600" : "text-green-600"}`}
-                        >
-                          ₹{student.balance.toFixed(2)}
-                        </span>
-                        {student.balance < 0 && <AlertTriangle className="w-4 h-4 text-red-500 ml-1" />}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <Badge
-                        variant={student.isActive ? "default" : "secondary"}
-                        className={student.isActive ? "bg-green-500 hover:bg-green-600" : "bg-gray-400"}
-                      >
-                        {student.isActive ? "Active" : "Inactive"}
-                      </Badge>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleEditStudent(student)}
-                          className="text-blue-500 hover:text-blue-600"
-                          title="Edit Student"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleTopUp(student)}
-                          className="text-green-500 hover:text-green-600"
-                          title="Top Up Balance"
-                        >
-                          <CreditCard className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeduct(student)}
-                          className="text-orange-500 hover:text-orange-600"
-                          title="Deduct Balance"
-                        >
-                          <Minus className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleToggleActive(student.id, student.isActive)}
-                          className={
-                            student.isActive
-                              ? "text-orange-500 hover:text-orange-600"
-                              : "text-green-500 hover:text-green-600"
-                          }
-                          title={student.isActive ? "Disable Student" : "Enable Student"}
-                        >
-                          {student.isActive ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteStudent(student.id, student.name)}
-                          className="text-red-500 hover:text-red-600"
-                          title="Delete Student"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </CardContent>
-      </Card>
+//       {/* Students List */}
+//       <Card>
+//         <CardHeader>
+//           <CardTitle className="text-lg font-semibold text-gray-900">Students Directory</CardTitle>
+//         </CardHeader>
+//         <CardContent className="p-0">
+//           <div className="overflow-x-auto">
+//             <table className="w-full">
+//               <thead className="bg-gray-50">
+//                 <tr>
+//                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+//                     Student
+//                   </th>
+//                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+//                     Roll Number
+//                   </th>
+//                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+//                     Contact
+//                   </th>
+//                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+//                     Balance
+//                   </th>
+//                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+//                     Status
+//                   </th>
+//                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+//                     Actions
+//                   </th>
+//                 </tr>
+//               </thead>
+//               <tbody className="bg-white divide-y divide-gray-200">
+//                 {filteredStudents.map((student: Student) => (
+//                   <tr key={student.id} className={!student.isActive ? "bg-gray-50 opacity-75" : ""}>
+//                     <td className="px-6 py-4 whitespace-nowrap">
+//                       <div className="flex items-center">
+//                         <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-lg">
+//                           👤
+//                         </div>
+//                         <div className="ml-3">
+//                           <p className={`text-sm font-medium ${student.isActive ? "text-gray-900" : "text-gray-500"}`}>
+//                             {student.name}
+//                           </p>
+//                         </div>
+//                       </div>
+//                     </td>
+//                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+//                       {student.rollNumber}
+//                     </td>
+//                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+//                       <div>
+//                         {student.email && <div>{student.email}</div>}
+//                         {student.phone && <div className="text-gray-500">{student.phone}</div>}
+//                       </div>
+//                     </td>
+//                     <td className="px-6 py-4 whitespace-nowrap">
+//                       <div className="flex items-center">
+//                         <span
+//                           className={`text-sm font-medium ${student.balance < 0 ? "text-red-600" : "text-green-600"}`}
+//                         >
+//                           ₹{student.balance.toFixed(2)}
+//                         </span>
+//                         {student.balance < 0 && <AlertTriangle className="w-4 h-4 text-red-500 ml-1" />}
+//                       </div>
+//                     </td>
+//                     <td className="px-6 py-4 whitespace-nowrap">
+//                       <Badge
+//                         variant={student.isActive ? "default" : "secondary"}
+//                         className={student.isActive ? "bg-green-500 hover:bg-green-600" : "bg-gray-400"}
+//                       >
+//                         {student.isActive ? "Active" : "Inactive"}
+//                       </Badge>
+//                     </td>
+//                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+//                       <div className="flex space-x-2">
+//                         <Button
+//                           variant="ghost"
+//                           size="sm"
+//                           onClick={() => handleEditStudent(student)}
+//                           className="text-blue-500 hover:text-blue-600"
+//                           title="Edit Student"
+//                         >
+//                           <Edit className="w-4 h-4" />
+//                         </Button>
+//                         <Button
+//                           variant="ghost"
+//                           size="sm"
+//                           onClick={() => handleTopUp(student)}
+//                           className="text-green-500 hover:text-green-600"
+//                           title="Top Up Balance"
+//                         >
+//                           <CreditCard className="w-4 h-4" />
+//                         </Button>
+//                         <Button
+//                           variant="ghost"
+//                           size="sm"
+//                           onClick={() => handleDeduct(student)}
+//                           className="text-orange-500 hover:text-orange-600"
+//                           title="Deduct Balance"
+//                         >
+//                           <Minus className="w-4 h-4" />
+//                         </Button>
+//                         <Button
+//                           variant="ghost"
+//                           size="sm"
+//                           onClick={() => handleToggleActive(student.id, student.isActive)}
+//                           className={
+//                             student.isActive
+//                               ? "text-orange-500 hover:text-orange-600"
+//                               : "text-green-500 hover:text-green-600"
+//                           }
+//                           title={student.isActive ? "Disable Student" : "Enable Student"}
+//                         >
+//                           {student.isActive ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+//                         </Button>
+//                         <Button
+//                           variant="ghost"
+//                           size="sm"
+//                           onClick={() => handleDeleteStudent(student.id, student.name)}
+//                           className="text-red-500 hover:text-red-600"
+//                           title="Delete Student"
+//                         >
+//                           <Trash2 className="w-4 h-4" />
+//                         </Button>
+//                       </div>
+//                     </td>
+//                   </tr>
+//                 ))}
+//               </tbody>
+//             </table>
+//           </div>
+//         </CardContent>
+//       </Card>
 
-      <AddStudentModal open={showAddModal} onOpenChange={setShowAddModal} onSuccess={onSuccess} />
-      {selectedStudent && (
-        <>
-          <EditStudentModal
-            open={showEditModal}
-            onOpenChange={setShowEditModal}
-            student={{
-              id: selectedStudent.id,
-              name: selectedStudent.name,
-              rollNumber: selectedStudent.rollNumber,
-              standard: selectedStudent.standard,
-              year: selectedStudent.year,
-              email: selectedStudent.email, 
-              phone: selectedStudent.phone,
-              balance: selectedStudent.balance,
-            }}
-            onSuccess={onSuccess}
-          />
-          <TopUpModal
-            isOpen={showTopUpModal}
-            onClose={() => setShowTopUpModal(false)}
-            student={{
-              id: selectedStudent.id,
-              name: selectedStudent.name,
-              rollNumber: selectedStudent.rollNumber,
-              balance: selectedStudent.balance,
-            }}
-            onSuccess={onSuccess}
-          />
-          <DeductBalanceModal
-            isOpen={showDeductModal}
-            onClose={() => setShowDeductModal(false)}
-            student={{
-              id: selectedStudent.id,
-              name: selectedStudent.name,
-              rollNumber: selectedStudent.rollNumber,
-              balance: selectedStudent.balance,
-            }}
-            onSuccess={onSuccess}
-          />
-        </>
-      )}
-    </div>
-  )
-}
+//       <AddStudentModal open={showAddModal} onOpenChange={setShowAddModal} onSuccess={onSuccess} />
+//       {selectedStudent && (
+//         <>
+//           <EditStudentModal
+//             open={showEditModal}
+//             onOpenChange={setShowEditModal}
+//             student={{
+//               id: selectedStudent.id,
+//               name: selectedStudent.name,
+//               rollNumber: selectedStudent.rollNumber,
+//               standard: selectedStudent.standard,
+//               year: selectedStudent.year,
+//               email: selectedStudent.email, 
+//               phone: selectedStudent.phone,
+//               balance: selectedStudent.balance,
+//             }}
+//             onSuccess={onSuccess}
+//           />
+//           <TopUpModal
+//             isOpen={showTopUpModal}
+//             onClose={() => setShowTopUpModal(false)}
+//             student={{
+//               id: selectedStudent.id,
+//               name: selectedStudent.name,
+//               rollNumber: selectedStudent.rollNumber,
+//               balance: selectedStudent.balance,
+//             }}
+//             onSuccess={onSuccess}
+//           />
+//           <DeductBalanceModal
+//             isOpen={showDeductModal}
+//             onClose={() => setShowDeductModal(false)}
+//             student={{
+//               id: selectedStudent.id,
+//               name: selectedStudent.name,
+//               rollNumber: selectedStudent.rollNumber,
+//               balance: selectedStudent.balance,
+//             }}
+//             onSuccess={onSuccess}
+//           />
+//         </>
+//       )}
+//     </div>
+//   )
+// }
 
 
 

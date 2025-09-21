@@ -237,7 +237,11 @@ export function StudentTransactionReport() {
                     <tr key={transaction.id}>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         <div>
-                          <div className="font-medium">{new Date(transaction.createdAt).toLocaleDateString()}</div>
+                          <div className="font-medium">{new Date(transaction.createdAt).toLocaleDateString('en-GB', {
+                              day: '2-digit',
+                              month: '2-digit',
+                              year: 'numeric'
+                            }) || "🤔?"}</div>
                           <div className="text-gray-500">{new Date(transaction.createdAt).toLocaleTimeString()}</div>
                         </div>
                       </td>

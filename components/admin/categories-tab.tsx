@@ -194,38 +194,42 @@ const handleConfirmEdit = (data: { name: string; description: string }) => {
                       </Badge>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(category.createdAt).toLocaleDateString()}
+                      {new Date(category.createdAt).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                      }) || "🤔?"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-  <div className="flex space-x-2">
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={() => handleEditCategory(category)}
-      className="text-purple-500 hover:text-purple-600"
-      title="Edit Category"
-    >
-      <Edit className="w-4 h-4" />
-    </Button>
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={() => handleToggleActive(category.id, category.isActive)}
-      className="text-blue-500 hover:text-blue-600"
-      title="Toggle Active Status"
-    >
-      {category.isActive ? "Deactivate" : "Activate"}
-    </Button>
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={() => handleDeleteCategory(category.id, category.name)}
-      className="text-red-500 hover:text-red-600"
-    >
-      <Trash2 className="w-4 h-4" />
-    </Button>
-  </div>
-</td>
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleEditCategory(category)}
+                          className="text-purple-500 hover:text-purple-600"
+                          title="Edit Category"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleToggleActive(category.id, category.isActive)}
+                          className="text-blue-500 hover:text-blue-600"
+                          title="Toggle Active Status"
+                        >
+                          {category.isActive ? "Deactivate" : "Activate"}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteCategory(category.id, category.name)}
+                          className="text-red-500 hover:text-red-600"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </td>
                     {/* <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       <div className="flex space-x-2">
                         <Button

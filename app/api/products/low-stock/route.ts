@@ -1,32 +1,39 @@
 import { NextResponse } from "next/server"
 import dbConnect from "@/lib/mongodb"
-import { Product } from "@/lib/models"
+import { Product, SubProduct } from "@/lib/models"
 
 export async function GET() {
   try {
     await dbConnect()
 
-    const products = await Product.find({
+    const subProducts = await SubProduct.find({
       isActive: true,
       $expr: { $lte: ["$stock", "$lowStockThreshold"] },
-    }).sort({ createdAt: -1 }).populate('categoryId', 'name')
+    }).sort({ createdAt: -1 }).populate({
+      path: "productId",
+      select: "name categoryId",
+      populate: {
+        path: "categoryId",
+        select: "name"
+      }
+    })
 
-    console.log("Low stock products:", products);
-    
+    console.log("Low stock subProducts:", subProducts);
     
     return NextResponse.json(
-      products.map((product) => ({
-        id: product._id.toString(),
-        name: product.name,
-        category: product.categoryId?.name, // Get category name from populated data
-        categoryId: product.categoryId?._id.toString(),
-        price: product.price,
-        stock: product.stock,
-        lowStockThreshold: product.lowStockThreshold,
-        barcode: product.barcode,
-        description: product.description,
-        isActive: product.isActive,
-        createdAt: product.createdAt,
+      subProducts.map((subProduct) => ({
+        id: subProduct._id.toString(),
+        name: `${subProduct.productId?.name} - ${subProduct.name}`, // Combine parent and variant names
+        size: subProduct.size,
+        categoryId: subProduct.parentProduct?.categoryId?._id?.toString(),
+        category: subProduct.parentProduct?.categoryId?.name || "🤔❓",
+        price: subProduct.price,
+        stock: subProduct.stock,
+        lowStockThreshold: subProduct.lowStockThreshold,
+        barcode: subProduct.barcode,
+        description: subProduct.description,
+        isActive: subProduct.isActive,
+        createdAt: subProduct.createdAt,
       })),
     )
   } catch (error) {
