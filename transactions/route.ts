@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import dbConnect from "@/lib/mongodb"
 import { Student } from "@/lib/models/student"
 import { Transaction } from "@/lib/models/transaction"
+import { StudentQuery } from "@/lib/types"
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ rollNumber: string }> }) {
   try {
@@ -23,7 +24,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Build date query
-    const query: any = { studentId: student._id }
+    const query: StudentQuery = { studentId: student._id }
 
     if (dateRange !== "all") {
       const now = new Date()

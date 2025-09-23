@@ -26,12 +26,6 @@ const StudentSchema = new Schema<IStudent>(
       required: true,
       trim: true,
     },
-    email: {
-      type: String,
-      trim: true,
-      lowercase: true,
-      sparse: true,
-    },
     phone: {
       type: String,
       trim: true,

@@ -12,8 +12,6 @@ import InventoryTab from "@/components/admin/inventory-tab"
 import TransactionsTab from "@/components/admin/transactions-tab"
 import CategoriesTab from "@/components/admin/categories-tab"
 import SellingTab from "@/components/admin/selling-tab"
-import {StudentTransactionReport} from "@/components/reports/student-transaction-report"
-import {TimelineReport} from "@/components/reports/timeline-report"
 
 type AdminTab =
   | "overview"
@@ -23,8 +21,6 @@ type AdminTab =
   | "inventory"
   | "transactions"
   | "selling"
-  | "student-report"
-  | "timeline-report"
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState<AdminTab>("overview")
@@ -44,8 +40,6 @@ export default function AdminDashboard() {
     { id: "categories" as AdminTab, label: "Categories", icon: Tag },
     { id: "inventory" as AdminTab, label: "Inventory", icon: Warehouse },
     { id: "transactions" as AdminTab, label: "Transactions", icon: Receipt },
-    { id: "student-report" as AdminTab, label: "Student Report", icon: Receipt },
-    { id: "timeline-report" as AdminTab, label: "Timeline Report", icon: BarChart3 },
   ]
 
   const renderTabContent = () => {
@@ -64,10 +58,6 @@ export default function AdminDashboard() {
         return <InventoryTab />
       case "transactions":
         return <TransactionsTab />
-      case "student-report":
-        return <StudentTransactionReport />
-      case "timeline-report":
-        return <TimelineReport />
       default:
         return <OverviewTab />
     }

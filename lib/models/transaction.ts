@@ -15,8 +15,8 @@ export interface ITransaction extends Document {
   totalAmount: number
   status: "pending" | "completed" | "cancelled"
   transactionType: "purchase" | "topup" | "deduction"
-  performedBy: "seller" | "accountant" | "admin"
   reason?: string
+  performedBy: "seller" | "accountant" | "admin"
   createdAt: Date
   updatedAt: Date
 }
@@ -74,14 +74,14 @@ const TransactionSchema = new Schema<ITransaction>(
       enum: ["purchase", "topup", "deduction"],
       default: "purchase",
     },
+    reason: {
+      type: String,
+      trim: true,
+    },
     performedBy: {
       type: String,
       enum: ["seller", "accountant", "admin"],
       default: "seller",
-    },
-    reason: {
-      type: String,
-      trim: true,
     },
   },
   {

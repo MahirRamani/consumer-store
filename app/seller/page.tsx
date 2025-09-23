@@ -9,7 +9,7 @@ import { useQuery } from "@tanstack/react-query"
 import StudentLookup from "@/components/seller/student-lookup"
 import ProductGrid from "@/components/seller/product-grid"
 import ShoppingCart from "@/components/seller/shopping-cart"
-import type { Student, CartItem } from "@/lib/types"
+import type { Student, CartItem, Product, SubProduct } from "@/lib/types"
 
 export default function SellerInterface() {
   const router = useRouter()
@@ -31,7 +31,7 @@ export default function SellerInterface() {
     router.push("/login")
   }
 
-  const addToCart = (product: any) => {
+  const addToCart = (product: SubProduct) => {
     if (product.stock <= 0) return
 
     const existingItem = cartItems.find((item) => item.productId === product.id)

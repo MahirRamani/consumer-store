@@ -2,6 +2,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import dbConnect from "@/lib/mongodb"
 import { Student } from "@/lib/models/student"
 import { Transaction } from "@/lib/models/transaction"
+import { StudentQuery } from "@/lib/types"
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ query: string }> }) {
   try {
@@ -23,7 +24,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 
     // Build date query
-    const transactionQuery: any = { studentId: student._id }
+    const transactionQuery: StudentQuery = { studentId: student._id }
 
     if (dateRange !== "all") {
       const now = new Date()
@@ -59,7 +60,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const formattedTransactions = transactions.map((transaction) => ({
       id: transaction._id.toString(),
       studentId: transaction.studentId._id.toString(),
-      sellerId: transaction.sellerId.toString(),
+      sellerId: transaction.sellerId?.toString(),
       items: transaction.items,
       totalAmount: transaction.totalAmount,
       status: transaction.status,

@@ -1,4 +1,3 @@
-// Frontend Component with Pagination and Working Export (TransactionsTab.tsx)
 "use client"
 
 import { useState } from "react"
@@ -10,22 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Search, Download, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
-
-interface PaginationInfo {
-  currentPage: number
-  totalPages: number
-  totalCount: number
-  limit: number
-  hasNextPage: boolean
-  hasPreviousPage: boolean
-  startIndex: number
-  endIndex: number
-}
-
-interface TransactionsResponse {
-  data: any[]
-  pagination: PaginationInfo
-}
+import { ApiResponse, QueryError, TransactionWithDetails } from "@/lib/types"
 
 export default function TransactionsTab() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -37,7 +21,7 @@ export default function TransactionsTab() {
   const [pageSize, setPageSize] = useState(10)
   const [isExporting, setIsExporting] = useState(false)
 
-  const { data: response, isLoading } = useQuery<TransactionsResponse>({
+  const { data: response, isLoading } = useQuery<ApiResponse<TransactionWithDetails[]>>({
     queryKey: ["transactions", searchTerm, statusFilter, dateRange, startDate, endDate, currentPage, pageSize],
     queryFn: async () => {
       const params = new URLSearchParams()
@@ -50,7 +34,11 @@ export default function TransactionsTab() {
       params.append("limit", pageSize.toString())
 
       const response = await fetch(`/api/transactions?${params}`)
-      if (!response.ok) throw new Error("Failed to fetch transactions")
+      // if (!response.ok) throw new Error("Failed to fetch transactions")
+      if (!response.ok) {
+        const error: QueryError = { message: "Failed to fetch transactions", status: response.status }
+        throw error
+      }
       return response.json()
     },
   })
@@ -128,14 +116,6 @@ export default function TransactionsTab() {
         </div>
 
         <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handlePageChange(1)}
-            disabled={!hasPreviousPage}
-          >
-            <ChevronsLeft className="w-4 h-4" />
-          </Button>
           <Button
             variant="outline"
             size="sm"
@@ -320,7 +300,7 @@ export default function TransactionsTab() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {transactions.map((transaction: any) => (
+                {transactions.map((transaction: TransactionWithDetails) => (
                   <tr key={transaction.id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-mono">
                       #TXN{transaction.id.toString().padStart(6, "0")}
@@ -332,7 +312,7 @@ export default function TransactionsTab() {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600">
-                      ₹{Number.parseFloat(transaction.totalAmount).toFixed(2)}
+                      ₹{transaction.totalAmount.toFixed(2)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {JSON.parse(transaction.items || "[]").length} items

@@ -7,6 +7,7 @@ import { Package, IndianRupee, Receipt, TrendingUp, AlertTriangle, PackagePlus }
 import LowStockModal from "@/components/modals/low-stock-modal"
 import StockUpdatesModal from "@/components/modals/stock-updates-modal"
 import WeeklySalesChart from "@/components/charts/weekly-sales-chart"
+import { Transaction } from "@/lib/types"
 
 export default function OverviewTab() {
   const [showLowStockModal, setShowLowStockModal] = useState(false)
@@ -140,7 +141,7 @@ export default function OverviewTab() {
           <CardContent>
             <div className="space-y-4">
               {recentTransactions && recentTransactions.length > 0 ? (
-                recentTransactions.map((transaction: any) => (
+                recentTransactions.map((transaction: Transaction) => (
                   <div
                     key={transaction.id}
                     className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0"

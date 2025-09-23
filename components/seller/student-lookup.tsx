@@ -27,7 +27,9 @@ export default function StudentLookup({ selectedStudent, onStudentSelect }: Stud
 
     setIsSearching(true)
     try {
-      const response = await fetch(`/api/students/roll/${rollNumber.trim()}`)
+      const response = await fetch(`/api/students/${rollNumber.trim()}`)
+      console.log("response", response, rollNumber);
+      
       if (response.ok) {
         const student = await response.json()
         onStudentSelect(student)

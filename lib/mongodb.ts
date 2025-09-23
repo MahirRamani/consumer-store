@@ -1,6 +1,6 @@
 import mongoose from "mongoose"
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/consumer-store"
+const MONGODB_URI = process.env.MONGODB_URI
 
 console.log(`MONGODB_URI: ${MONGODB_URI}`)
 
@@ -14,7 +14,7 @@ const dbConnect = async () => {
   try {
     await mongoose.connect(MONGODB_URI)
     console.log("MongoDB connected successfully")
-  } catch (error: any) {
+  } catch (error) {
     console.error("MongoDB connection error:", error.message)
     throw error
   }
