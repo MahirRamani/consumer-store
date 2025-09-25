@@ -34,11 +34,11 @@ export default function AdminDashboard() {
 
   const tabs = [
     { id: "overview" as AdminTab, label: "Overview", icon: BarChart3 },
-    { id: "selling" as AdminTab, label: "Selling", icon: ShoppingCart },
+    { id: "categories" as AdminTab, label: "Categories", icon: Tag },
     { id: "products" as AdminTab, label: "Products", icon: Package },
     { id: "subproducts" as AdminTab, label: "Sub-Products", icon: Layers },
-    { id: "categories" as AdminTab, label: "Categories", icon: Tag },
     { id: "inventory" as AdminTab, label: "Inventory", icon: Warehouse },
+    { id: "selling" as AdminTab, label: "Selling", icon: ShoppingCart },
     { id: "transactions" as AdminTab, label: "Transactions", icon: Receipt },
   ]
 
@@ -46,14 +46,14 @@ export default function AdminDashboard() {
     switch (activeTab) {
       case "overview":
         return <OverviewTab />
-      case "selling":
-        return <SellingTab />
+      case "categories":
+        return <CategoriesTab />
       case "products":
         return <ProductsTab />
       case "subproducts":
         return <SubProductsTab />
-      case "categories":
-        return <CategoriesTab />
+      case "selling":
+        return <SellingTab />
       case "inventory":
         return <InventoryTab />
       case "transactions":
@@ -67,7 +67,7 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="px-6 py-4 flex items-center justify-between">
+        <div className="px-4 py-2 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="bg-blue-500 text-white w-10 h-10 rounded-lg flex items-center justify-center">
               <Store className="w-6 h-6" />
@@ -100,11 +100,10 @@ export default function AdminDashboard() {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`py-4 px-2 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 whitespace-nowrap ${
-                    activeTab === tab.id
-                      ? "border-blue-500 text-blue-500"
-                      : "border-transparent text-gray-500 hover:text-blue-500"
-                  }`}
+                  className={`py-3 px-2 border-b-2 font-medium text-sm transition-colors flex items-center space-x-2 whitespace-nowrap ${activeTab === tab.id
+                    ? "border-blue-500 text-blue-500"
+                    : "border-transparent text-gray-500 hover:text-blue-500"
+                    }`}
                 >
                   <Icon className="w-4 h-4" />
                   <span>{tab.label}</span>
@@ -116,7 +115,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Tab Content */}
-      <div className="p-6">{renderTabContent()}</div>
+      <div className="p-3">{renderTabContent()}</div>
     </div>
   )
 }

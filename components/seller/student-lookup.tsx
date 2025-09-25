@@ -54,7 +54,7 @@ export default function StudentLookup({ selectedStudent, onStudentSelect }: Stud
   return (
     <Card>
       <CardHeader className="mb-0">
-        <CardTitle className="text-lg font-semibold text-gray-900">Student Lookup</CardTitle>
+        <CardTitle className="text-lg font-semibold text-gray-900 m-0 p-0">Student Lookup</CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
         <div className="flex space-x-2">
@@ -62,7 +62,6 @@ export default function StudentLookup({ selectedStudent, onStudentSelect }: Stud
             placeholder="Enter roll number"
             value={rollNumber}
             onChange={(e) => setRollNumber(e.target.value)}
-            onKeyPress={handleKeyPress}
             className="flex-1 text-lg"
           />
           <Button

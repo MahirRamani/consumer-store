@@ -93,28 +93,6 @@ export default function SellerInterface() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">Point of Sale</h1>
-              <p className="text-sm text-gray-600">Hostel Store Transactions</p>
-            </div>
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="text-right">
-              <p className="text-sm text-gray-600">Today's Sales</p>
-              <p className="text-lg font-bold text-green-500">₹{dashboardStats?.todaySales?.toFixed(2) || "0.00"}</p>
-            </div>
-            <Button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 text-white">
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
-            </Button>
-          </div>
-        </div>
-      </header>
-
       {/* Main POS Interface */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6 h-[calc(100vh-88px)]">
         {/* Left Side: Student Search & Products */}

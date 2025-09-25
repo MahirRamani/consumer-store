@@ -74,7 +74,7 @@ export function ProductVariantsModal({
                 {variant.image && (
                   <div className="w-full h-32 overflow-hidden rounded-t-lg">
                     <img
-                      src={variant.image || "/placeholder.svg"}
+                      src={variant.image || "https://res.cloudinary.com/dap7sy5lk/image/upload/v1757599575/Wafer_rgwce3.jpg"}
                       alt={variant.name}
                       className="w-full h-full object-cover"
                     />

@@ -26,7 +26,7 @@ export interface Product {
   isActive: boolean
   hasVariants: boolean
   variantCount?: number
-  variants: SubProduct[]  // ✨ Just the variants array - that's it!
+  variants: SubProduct[]
   createdAt: Date
   updatedAt: Date
 }
@@ -51,17 +51,46 @@ export interface SubProduct {
   updatedAt: Date
 }
 
+
 export interface Student {
   id: string
-  rollNumber: string
   name: string
-  phone?: string
-  standard: string
+  rollNumber?: string
   balance: number
-  isActive: boolean
-  createdAt: Date
-  updatedAt: Date
 }
+
+type CartItemType = "product" | "subProduct"
+
+interface CartItemShape {
+  productId?: string
+  subProductId?: string
+  name: string
+  price: number
+  quantity: number
+  stock: number
+  itemType: CartItemType
+}
+
+export interface CartItemInput extends CartItemShape {
+  itemKey?: string
+}
+
+export interface CartItem extends CartItemShape {
+  itemKey: string
+}
+
+
+// export interface Student {
+//   id: string
+//   rollNumber: string
+//   name: string
+//   phone?: string
+//   standard: string
+//   balance: number
+//   isActive: boolean
+//   createdAt: Date
+//   updatedAt: Date
+// }
 
 export interface Transaction {
   id: string
@@ -601,17 +630,6 @@ export interface InventoryLogWithDetails {
     size: string
     price: number
     category: string
-  }
-}
-
-export interface LowStockSubProduct extends SubProduct {
-  parentProduct?: {
-    id: string
-    name: string
-    category?: {
-      id: string
-      name: string
-    }
   }
 }
 

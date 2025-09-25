@@ -35,7 +35,6 @@ const SubProductSchema = new Schema<ISubProduct>(
     },
     size: {
       type: String,
-      required: true,
       trim: true,
     },
     price: {
