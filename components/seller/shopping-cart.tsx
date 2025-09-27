@@ -9,7 +9,7 @@ import { ShoppingCartIcon, Plus, Minus, Trash2, CreditCard } from "lucide-react"
 import { toast } from "sonner"
 import SuccessModal from "@/components/modals/success-modal"
 import ConfirmationModal from "@/components/modals/confirmation-modal"
-import type { Student, CartItem } from "@/lib/types"
+import type { Student, CartItem, Transaction } from "@/lib/types"
 
 interface ShoppingCartProps {
   selectedStudent: Student | null
@@ -30,7 +30,7 @@ export default function ShoppingCart({
 }: ShoppingCartProps) {
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const [showConfirmationModal, setShowConfirmationModal] = useState(false)
-  const [transactionData, setTransactionData] = useState<any>(null)
+  const [transactionData, setTransactionData] = useState<Transaction | null>(null)
   const queryClient = useQueryClient()
 
   const processTransactionMutation = useMutation({

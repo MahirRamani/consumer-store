@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const categoryId = searchParams.get("categoryId")
     const includeInactive = searchParams.get("includeInactive") === "true"
     const page = Number.parseInt(searchParams.get("page") || "1")
-    const limit = Number.parseInt(searchParams.get("limit") || "50")
+    const limit = Number.parseInt(searchParams.get("limit") || "0")
 
     const query: ProductQuery = {}
 

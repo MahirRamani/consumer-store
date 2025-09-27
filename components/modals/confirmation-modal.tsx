@@ -56,7 +56,7 @@ export default function ConfirmationModal({
             <div className="space-y-2 max-h-32 overflow-y-auto">
               {cartItems && cartItems.length > 0 ? (
                 cartItems.map((item) => (
-                  <div key={item.productId} className="flex justify-between text-sm">
+                  <div key={item.subProductId} className="flex justify-between text-sm">
                     <span>
                       {item.name} x {item.quantity}
                     </span>

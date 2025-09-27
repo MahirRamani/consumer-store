@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Search, Download, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
+import { Transaction } from "@/lib/types"
 
 interface PaginationInfo {
   currentPage: number
@@ -320,7 +321,7 @@ export default function TransactionsTab() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {transactions.map((transaction: any) => (
+                {transactions.map((transaction: Transaction) => (
                   <tr key={transaction.id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-mono">
                       #TXN{transaction.id.toString().padStart(6, "0")}

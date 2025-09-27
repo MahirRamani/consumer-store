@@ -9,11 +9,12 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Edit } from "lucide-react"
+import { Student } from "@/lib/types"
 
 interface EditStudentModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onConfirm: (data: any) => void
+  onConfirm: (data: Student) => void
   isLoading: boolean
   student: {
     id: string

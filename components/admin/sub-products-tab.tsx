@@ -185,7 +185,7 @@ export default function SubProductsTab() {
   }, [subProducts, filterState])
 
   // Memoized handlers to prevent unnecessary re-renders
-  const handleFilterChange = useCallback((key: keyof FilterState, value: any) => {
+  const handleFilterChange = useCallback((key: keyof FilterState, value: string | boolean) => {
     setFilterState(prev => ({ ...prev, [key]: value }))
   }, [])
 
